@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="又称 不透明指针，是实习的时候看到的一个设计模式，可以隐藏对象的数据成员，保证二进制兼容性（防止添加数据成员导致的链接库偏移改变），主要服务于 Qt 早年的闭源目的。 Qt 的 Wiki 里面有比较详细的介绍，但是代码似乎有点问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt 的 D-Pointer 原理和简单实现">
+<meta property="og:url" content="https://f-jason.site/blog/2023/01/15/d-pointer/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="又称 不透明指针，是实习的时候看到的一个设计模式，可以隐藏对象的数据成员，保证二进制兼容性（防止添加数据成员导致的链接库偏移改变），主要服务于 Qt 早年的闭源目的。 Qt 的 Wiki 里面有比较详细的介绍，但是代码似乎有点问题。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-01-15T12:09:36.000Z">
+<meta property="article:modified_time" content="2023-01-15T12:09:36.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2023/01/15/d-pointer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Qt 的 D-Pointer 原理和简单实现 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%85%BC%E5%AE%B9"><span class="nav-text">二进制兼容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#D-Pointer"><span class="nav-text">D-Pointer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">继承和优化</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2023/01/15/d-pointer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Qt 的 D-Pointer 原理和简单实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-01-15 20:09:36" itemprop="dateCreated datePublished" datetime="2023-01-15T20:09:36+08:00">2023-01-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Cases/" itemprop="url" rel="index"><span itemprop="name">Cases</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>又称 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Opaque_pointer">不透明指针</a>，是实习的时候看到的一个设计模式，可以隐藏对象的数据成员，保证二进制兼容性（防止添加数据成员导致的链接库偏移改变），主要服务于 Qt 早年的闭源目的。</p>
+<p><a target="_blank" rel="noopener" href="https://wiki.qt.io/D-Pointer">Qt 的 Wiki</a> 里面有比较详细的介绍，但是代码似乎有点问题。</p>
+<span id="more"></span>
+<h1 id="二进制兼容"><a href="#二进制兼容" class="headerlink" title="二进制兼容"></a>二进制兼容</h1><p>首先大概讲一下二进制兼容。C++通过指定偏移量来在运行时访问对象的成员（函数或者变量），为了便于快速定位，它使用一套字节对齐的规则来安排链接库等二进制文件中对象成员的偏移量。如果给对象添加成员，就有可能改变部分或全部成员的偏移，那么发布的二进制链接库就无法保证兼容旧版本的程序，除非旧版本的程序也跟着重新编译一遍。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Monster</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Monster</span>();</span><br><span class="line">  <span class="type">int</span> health;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line">Monster::<span class="built_in">Monster</span>() : <span class="built_in">health</span>(<span class="number">100</span>) &#123; std::cout &lt;&lt; <span class="string">&quot;Monster::Monster()\n&quot;</span>; &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Monster m;</span><br><span class="line">  std::cout &lt;&lt; m.health &lt;&lt; std::endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样一个简单的结构，将 <code>Monster</code> 类导出成动态链接库，运行后的结果显然是先输出构造函数的提示句，然后输出初始化的 <code>health</code>，值是100。接着我们给 <code>Monster</code> 添加一个成员变量，比如攻击力 <code>attack</code>。这次我们只重新编译动态链接库，模拟发布时直接替换更新的情景。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Monster</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Monster</span>();</span><br><span class="line">  <span class="type">int</span> attack;</span><br><span class="line">  <span class="type">int</span> health;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line">Monster::<span class="built_in">Monster</span>() : <span class="built_in">health</span>(<span class="number">100</span>), <span class="built_in">attack</span>(<span class="number">30</span>) &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Monster::Monster()\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接运行原来的程序，发现本来输出的 100 变成了 30，显然是访问到了存放攻击力数值的内存。每次把新增的成员放到最后面可以“解决”这个问题，但这种规范肯定比花括号换行还难遵守，更何况如果新增的并不是一样大的成员，可能连之前的成员偏移都会因为 alignment 而改变。</p>
+<h1 id="D-Pointer"><a href="#D-Pointer" class="headerlink" title="D-Pointer"></a>D-Pointer</h1><p>为了避免这种情况，我们可以把在后续开发中易变或者易扩展的成员放到一个独立的结构体中，然后在原对象里保存一个指针（D-Pointer）指向这个结构体，像这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MonsterPrivate</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Monster</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Monster</span>();</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">health</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  MonsterPrivate *d_ptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MonsterPrivate</span> &#123;</span><br><span class="line">  <span class="built_in">MonsterPrivate</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;MonsterPrivate::MonsterPrivate()\n&quot;</span>; &#125;</span><br><span class="line">  <span class="type">int</span> health = <span class="number">100</span>;</span><br><span class="line">  <span class="type">int</span> attack = <span class="number">30</span>;</span><br><span class="line">&#125;;</span><br><span class="line">Monster::<span class="built_in">Monster</span>() : d_ptr&#123;<span class="keyword">new</span> MonsterPrivate&#125; &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Monster::Monster()\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Monster::health</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> d_ptr-&gt;health; &#125;</span><br></pre></td></tr></table></figure>
+<p>由于同时修改了可见性，主函数也要改一下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Monster m;</span><br><span class="line">  std::cout &lt;&lt; m.<span class="built_in">health</span>() &lt;&lt; std::endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们实际上把更新偏移的工作转移给了编写链接库的人。</p>
+<p>目前的示例代码只是用不透明指针来存放可以剥离出来的成员变量。如果我们需要存放和调用者相关的成员函数，那还需要在结构体里放一个指回原对象的指针，并且在合适的时候（比如原对象构造时）初始化。</p>
+<h1 id="继承和优化"><a href="#继承和优化" class="headerlink" title="继承和优化"></a>继承和优化</h1><p>面向对象无法绕过的事情就是继承，很多问题也是在继承的时候才出现的。现在我们要实现一个继承自 <code>Monster</code> 的类 <code>Dragon</code>，当然也要给它的私有成员（比如颜色）准备一个结构体：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Dragon.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DragonPrivate</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dragon</span> : <span class="keyword">public</span> Monster &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Dragon</span>();</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">color</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  DragonPrivate *d_ptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Dragon.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Dragon.h&quot;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">DragonPrivate</span> &#123;</span><br><span class="line">  <span class="built_in">DragonPrivate</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;DragonPrivate::DragonPrivate()\n&quot;</span>; &#125;</span><br><span class="line">  <span class="type">int</span> color = <span class="number">7</span>;</span><br><span class="line">&#125;;</span><br><span class="line">Dragon::<span class="built_in">Dragon</span>() : <span class="built_in">d_ptr</span>(<span class="keyword">new</span> DragonPrivate) &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Dragon::Dragon()\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Dragon::color</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> d_ptr-&gt;color; &#125;</span><br></pre></td></tr></table></figure>
+<p>然后测试一下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Dragon.h&quot;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Dragon d;</span><br><span class="line">  std::cout &lt;&lt; d.<span class="built_in">health</span>() &lt;&lt; std::endl;</span><br><span class="line">  std::cout &lt;&lt; d.<span class="built_in">color</span>() &lt;&lt; std::endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行没有问题。这样就够了吗？注意到每次我们构造新的对象时，都新申请了一块内存用来存放 <code>xxxPrivate</code>。如果一个类在继承树上很深的位置（比如 Qt 自己的一堆类），构造这个对象就会有很多次额外的内存分配。我们可以尽量共用内存，比如说充分利用不透明指针只是指针的特点。</p>
+<blockquote>
+<p>以下优化基于的假设（大概）是基于实例化一个派生类需要的内存申请（系统调用）次数比继承层数少。</p>
+</blockquote>
+<p>我们可以通过把不透明结构体也纳入继承体系来统一内存布局：直接实例化派生出来的不透明结构体，然后用它的地址去向上初始化基类的 <code>d_ptr</code>。这样总不会比让两个不透明结构体分开存放更差。至少看起来只用一次 <code>new</code>。</p>
+<p>由于需要继承 <code>MonsterPrivate</code>，我们把它的定义放到单独的头文件里。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster_p.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MonsterPrivate</span> &#123;</span><br><span class="line">  <span class="built_in">MonsterPrivate</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;MonsterPrivate::MonsterPrivate()\n&quot;</span>; &#125;</span><br><span class="line">  <span class="type">int</span> health = <span class="number">100</span>;</span><br><span class="line">  <span class="type">int</span> attack = <span class="number">30</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>Monster</code> 类多了一个构造函数，用来接收不透明结构体。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MonsterPrivate</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Monster</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Monster</span>();</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">health</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">attack</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  <span class="built_in">Monster</span>(MonsterPrivate &amp;d);</span><br><span class="line">  MonsterPrivate *d_ptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Monster.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line">Monster::<span class="built_in">Monster</span>() : d_ptr&#123;<span class="keyword">new</span> MonsterPrivate&#125; &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Monster::Monster()\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line">Monster::<span class="built_in">Monster</span>(MonsterPrivate &amp;d) : d_ptr&#123;&amp;d&#125; &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Monster::Monster(MonsterPrivate&amp;)\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Monster::health</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> d_ptr-&gt;health; &#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Monster::attack</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> d_ptr-&gt;attack; &#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>Dragon</code> 类就可以不存储自己的不透明指针。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Dragon.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DragonPrivate</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dragon</span> : <span class="keyword">public</span> Monster &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Dragon</span>();</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">color</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  <span class="comment">// DragonPrivate *d_ptr;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>但是，如果想使用基类的不透明指针，需要转换一下类型来访问派生部分的内存。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Dragon.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Dragon.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Monster_p.h&quot;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">DragonPrivate</span> : <span class="keyword">public</span> MonsterPrivate &#123;</span><br><span class="line">  <span class="built_in">DragonPrivate</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;DragonPrivate::DragonPrivate()\n&quot;</span>; &#125;</span><br><span class="line">  <span class="type">int</span> color = <span class="number">7</span>;</span><br><span class="line">&#125;;</span><br><span class="line">Dragon::<span class="built_in">Dragon</span>() : <span class="built_in">Monster</span>(*(<span class="keyword">new</span> DragonPrivate)) &#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Dragon::Dragon()\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Dragon::color</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">  DragonPrivate *d = <span class="built_in">static_cast</span>&lt;DragonPrivate *&gt;(d_ptr);</span><br><span class="line">  <span class="keyword">return</span> d-&gt;color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样下来只需要在实例化 <code>Dragon</code> 时构造一个不透明结构体就好了。</p>
+<p>如果不想写那么多类型转换，可以用宏代替：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _D(Class) Class##Private *d = static_cast<span class="string">&lt;Class##Private *&gt;</span>(d_ptr)</span></span><br></pre></td></tr></table></figure>
+<p>然后把这个宏放在什么头文件里全局包含。Qt 里用的是 <code>Q_D(Class)</code>，还额外套了一层宏，加上一个 getter，具体见 Wiki。</p>
+<p>当然这样实际优化的重任就交给编译器了。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2023/01/15/d-pointer/" title="Qt 的 D-Pointer 原理和简单实现">https://f-jason.site/blog/2023/01/15/d-pointer/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/12/31/2022-annual/" rel="prev" title="2022 年度总结">
+      <i class="fa fa-chevron-left"></i> 2022 年度总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2023/10/05/new-to-pytorch/" rel="next" title="PyTorch 入门">
+      PyTorch 入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

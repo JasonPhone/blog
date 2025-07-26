@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="突然认识到了自己的局限，于是不做人辣打算把图形编程放在比底层 API 更实用的基础上，比如 Unity 的 SRP。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity 学习记录 01 基础">
+<meta property="og:url" content="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="突然认识到了自己的局限，于是不做人辣打算把图形编程放在比底层 API 更实用的基础上，比如 Unity 的 SRP。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/graph.png">
+<meta property="article:published_time" content="2023-10-15T06:29:36.000Z">
+<meta property="article:modified_time" content="2023-10-15T06:29:36.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/graph.png">
+
+<link rel="canonical" href="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Unity 学习记录 01 基础 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-GameObject-%E5%92%8C%E8%84%9A%E6%9C%AC"><span class="nav-text">1 GameObject 和脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E7%95%8C%E9%9D%A2%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="nav-text">1.1 界面和基础操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E9%92%9F%E8%A1%A8%E6%A8%A1%E5%9E%8B"><span class="nav-text">1.2 钟表模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E8%84%9A%E6%9C%AC"><span class="nav-text">1.3 脚本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%87%BD%E6%95%B0%E5%9B%BE%E5%83%8F"><span class="nav-text">2 函数图像</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E9%A2%84%E5%88%B6%E4%BB%B6"><span class="nav-text">2.1 预制件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%84%9A%E6%9C%AC"><span class="nav-text">2.2 脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E8%A1%A8%E9%9D%A2%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-text">2.3 表面着色器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-URP-%E5%92%8C-Shader-Graph"><span class="nav-text">2.4 URP 和 Shader Graph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E5%8A%A8%E7%94%BB"><span class="nav-text">2.5 动画</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E5%87%BD%E6%95%B0%E5%9B%BE%E5%83%8F"><span class="nav-text">3 更复杂的函数图像</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E5%87%BD%E6%95%B0%E5%BA%93"><span class="nav-text">3.1 函数库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E5%A7%94%E6%89%98"><span class="nav-text">3.2 委托</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E5%9B%BE%E5%83%8F"><span class="nav-text">3.3 图像</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Profiling"><span class="nav-text">4 Profiling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Compute-Shader"><span class="nav-text">5 Compute Shader</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity 学习记录 01 基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-10-15 14:29:36" itemprop="dateCreated datePublished" datetime="2023-10-15T14:29:36+08:00">2023-10-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Record/" itemprop="url" rel="index"><span itemprop="name">Record</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/blog/2023/10/15/catlike-unity-basics/graph.png" alt="graph"></p>
+<p>突然认识到了自己的局限，于是<del>不做人辣</del>打算把图形编程放在比底层 API 更实用的基础上，比如 Unity 的 SRP。</p>
+<span id="more"></span>
+<p>还是喜欢看文字，所以跟的是<a target="_blank" rel="noopener" href="https://catlikecoding.com/unity/tutorials/">这个系列</a>。走完基础后可能直接跳到 SRP 部分。由于是笔记，内容可能比较细碎。</p>
+<p>Unity 版本：2022.3.7f1c1。</p>
+<p>基础部分主要是编辑器的基本使用和简单的脚本编写。</p>
+<p><strong><em>upd: FUCK the capitalism, FUCK YOU John Riccitiello.</em></strong></p>
+<h1 id="1-GameObject-和脚本"><a href="#1-GameObject-和脚本" class="headerlink" title="1 GameObject 和脚本"></a>1 GameObject 和脚本</h1><p>通过在 Unity 里搭建一个可动的钟表模型来熟悉基础的操作和脚本编写。</p>
+<h2 id="1-1-界面和基础操作"><a href="#1-1-界面和基础操作" class="headerlink" title="1.1 界面和基础操作"></a>1.1 界面和基础操作</h2><p>设置里可以更改外置的代码编辑器。改成了 VS Code。</p>
+<p>线性颜色空间，暂时不清楚作用。总不会是 Gamma 选项下的颜色不能做线性运算吧。后面看一下会不会影响观感。</p>
+<h2 id="1-2-钟表模型"><a href="#1-2-钟表模型" class="headerlink" title="1.2 钟表模型"></a>1.2 钟表模型</h2><p>使用 Unity 内置的基础 mesh 来搭一个钟表。</p>
+<p>可以发现 Unity 在构建 GameObject 的时候采用了组件结构，使用它们来实现变换、网格、渲染、碰撞等功能。</p>
+<p>通过创建材质并在 Mesh Renderer 组件中启用，可以自定义一个 mesh 的材质。目前通过这种方法来改变物体颜色。</p>
+<p>注意层级结构中上一级的位移会被附加给从属的对象。</p>
+<h2 id="1-3-脚本"><a href="#1-3-脚本" class="headerlink" title="1.3 脚本"></a>1.3 脚本</h2><p>VS Code 对 Unity 的支持还是不太到位，里面的 Unity 插件好像是上个月才发布的。</p>
+<p>如果想在编辑器里看到脚本里的私有成员，需要在声明时加上 <code>[SerializeField]</code> 将其序列化；如果不希望看到某个公共成员，可以使用 <code>[HideInInspector]</code>。将代码中的成员与场景中的对象绑定在一起的数据似乎是由编辑器维护的。</p>
+<p><code>Awake()</code> 等 Unity 事件的函数没必要指定可见性，Unity 会在 .NET 环境之外唤醒这些函数。但最好还是要符合编码规范。</p>
+<p>编写好的脚本需要作为组件附加到对应的对象上。</p>
+<p>实际的代码逻辑很简单：获取系统时间然后换算成对应的角度，再用角度去设置模型的旋转即可。</p>
+<h1 id="2-函数图像"><a href="#2-函数图像" class="headerlink" title="2 函数图像"></a>2 函数图像</h1><p>通过画一条函数曲线学习脚本、预制件（Prefab）和着色器的配合，还会稍微接触 URP 和 Render Graph。</p>
+<h2 id="2-1-预制件"><a href="#2-1-预制件" class="headerlink" title="2.1 预制件"></a>2.1 预制件</h2><p>可以把对象从 Hierarchy 拖到 Project 窗口里创建一个预制件，同时场景中的对象会成为预制件的一个实例（图标变成蓝色）。</p>
+<p>实例拥有的属性如果覆盖了预制件的，会在 Inspector 里用粗体标出来。</p>
+<h2 id="2-2-脚本"><a href="#2-2-脚本" class="headerlink" title="2.2 脚本"></a>2.2 脚本</h2><p>记得把预制件绑定到脚本对应的成员上。</p>
+<p>使用 <code>[Range(left, right)]</code> 配合 <code>SerializeField</code> 修饰可以使 Unity 在 Inspector 里将某个数值显示为可以配置的滑动条。</p>
+<p>可以通过 <code>point.SetParent(this.transform, false)</code> 设置组件的父节点，并且不根据父节点保持世界空间下的位置、旋转等属性。</p>
+<p>C# 的对象拷贝还不太明白。</p>
+<h2 id="2-3-表面着色器"><a href="#2-3-表面着色器" class="headerlink" title="2.3 表面着色器"></a>2.3 表面着色器</h2><p>基于世界空间下的位置来修改物体颜色。表面着色器只适用于默认渲染管线。</p>
+<p>SubShader 使用 CG 和 HLSL 混合语法。在着色器里也可以通过特定语法将一些属性反射到编辑器中。</p>
+<p>使用表面着色器需要通过材质，即将表面着色器附加到一个材质球上，然后将对象或预制件的材质改为该材质球。</p>
+<h2 id="2-4-URP-和-Shader-Graph"><a href="#2-4-URP-和-Shader-Graph" class="headerlink" title="2.4 URP 和 Shader Graph"></a>2.4 URP 和 Shader Graph</h2><p>使用 URP 需要安装对应的包，并在项目设置中启用对应的渲染管线。启用后原始的材质球都会坏掉，变成品红色。</p>
+<p>在当前版本的 Unity 中 URP 资产在 “Create/Rendering/URP Asset” 下，而 Shader Graph 就在次级菜单里。</p>
+<p>在 Shader Graph 里连线比写 shader 简单很多，也更直观。代价也显而易见：没有那么灵活，编译要点时间。</p>
+<h2 id="2-5-动画"><a href="#2-5-动画" class="headerlink" title="2.5 动画"></a>2.5 动画</h2><p>C# 的列表对象声明和定义是分开的，<code>Type[] x;</code> 之后需要 <code>x = new Type[size];</code>。另外，对象属性的获取和赋值会走拷贝，因此属性的成员不能像公共域一样直接修改。</p>
+<h1 id="3-更复杂的函数图像"><a href="#3-更复杂的函数图像" class="headerlink" title="3 更复杂的函数图像"></a>3 更复杂的函数图像</h1><p>主要是玩三角函数，以及一些 C# 语法糖。</p>
+<h2 id="3-1-函数库"><a href="#3-1-函数库" class="headerlink" title="3.1 函数库"></a>3.1 函数库</h2><p>这次使用 C# 的 static 类，这种类不能被实例化，也不能包含需要实例化的成员，而且无法被继承，很适合作为某种函数集合。</p>
+<p>C# 的一个语法糖：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">f</span>(<span class="params">x</span>)</span> =&gt; <span class="keyword">switch</span> type &#123;</span><br><span class="line">  <span class="number">0</span> =&gt; <span class="number">2</span> * x,</span><br><span class="line">  <span class="number">1</span> =&gt; x * x,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-委托"><a href="#3-2-委托" class="headerlink" title="3.2 委托"></a>3.2 委托</h2><p>C# 的函数指针，写起来像函数声明。</p>
+<p>可以进一步使用委托组成函数列表，但这样直接使用用户输入不太安全。</p>
+<p>替换成基于枚举类型的函数设置，序列化修饰符会使枚举类型在编辑器中显示为一个下拉列表。此处枚举类型仍然需要转型成整数才能访问函数列表。</p>
+<h2 id="3-3-图像"><a href="#3-3-图像" class="headerlink" title="3.3 图像"></a>3.3 图像</h2><p>基本上就是用一批几何体带上三角函数画各种东西了。</p>
+<h1 id="4-Profiling"><a href="#4-Profiling" class="headerlink" title="4 Profiling"></a>4 Profiling</h1><p>性能分析。主要是 Unity 自带的 profiler。</p>
+<p>自己也可以画一个显示帧率和内存的 UI，数据从引擎的接口拿。一个有意思的点是画的 UI 别太吃性能了。</p>
+<h1 id="5-Compute-Shader"><a href="#5-Compute-Shader" class="headerlink" title="5 Compute Shader"></a>5 Compute Shader</h1><p>没看完。HLSL 感觉还是要找本专门的书看。</p>
+<p><del>已经想快进到 SRP 了。</del></p>
+<p><a target="_blank" rel="noopener" href="https://catlikecoding.com/unity/tutorials/basics/compute-shaders/#:~:text=the%20data%20yet.-,Procedural%20Drawing,-With%20the%20positions">传送门</a>，以防我又想回来看。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>跟着教程就好。有些因为 UI 原因找不到的东西直接跳过（比如 URP 材质的 GPU 实例化），部分拓展的东西可以选做（比如画完球之后再画一个环）。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2023/10/15/catlike-unity-basics/" title="Unity 学习记录 01 基础">https://f-jason.site/blog/2023/10/15/catlike-unity-basics/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blog/tags/C/" rel="tag"># C#</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2023/10/05/new-to-pytorch/" rel="prev" title="PyTorch 入门">
+      <i class="fa fa-chevron-left"></i> PyTorch 入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2023/12/31/2023-annual/" rel="next" title="2023 年度总结">
+      2023 年度总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

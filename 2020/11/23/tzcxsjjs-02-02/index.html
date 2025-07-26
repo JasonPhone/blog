@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="鉴于上篇笔记写完了才发现有相当巨大的篇幅，以后的笔记以一章的每节为单位。 这一节是数据结构基础，简单介绍了树，进而讲了堆、二叉搜索树和并查集的简单使用。 数据结构里会添加一些教材的内容，权当复习。 啊我咕了这么久吗。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="挑战程序设计竞赛 02 章 02">
+<meta property="og:url" content="https://f-jason.site/blog/2020/11/23/tzcxsjjs-02-02/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="鉴于上篇笔记写完了才发现有相当巨大的篇幅，以后的笔记以一章的每节为单位。 这一节是数据结构基础，简单介绍了树，进而讲了堆、二叉搜索树和并查集的简单使用。 数据结构里会添加一些教材的内容，权当复习。 啊我咕了这么久吗。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-23T10:43:42.000Z">
+<meta property="article:modified_time" content="2020-11-23T10:43:42.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta property="article:tag" content="《挑战程序设计竞赛》">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/11/23/tzcxsjjs-02-02/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>挑战程序设计竞赛 02 章 02 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%91%E5%92%8C%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">树和二叉树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%91%E7%9A%84%E5%AD%98%E5%82%A8"><span class="nav-text">树的存储</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E5%92%8C%E5%A0%86"><span class="nav-text">优先队列和堆</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97"><span class="nav-text">优先队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E7%9A%84%E6%93%8D%E4%BD%9C%E5%92%8C%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">堆的操作和性能分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">堆的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STL-%E9%87%8C%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97"><span class="nav-text">STL 里的优先队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E5%BA%94%E7%94%A8"><span class="nav-text">优先队列应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Expedition-POJ-2431"><span class="nav-text">Expedition (POJ 2431)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E8%B0%88-Fence-Repair"><span class="nav-text">再谈 Fence Repair</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91"><span class="nav-text">二叉搜索树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E6%93%8D%E4%BD%9C%E5%92%8C%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">二叉搜索树的操作和性能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5"><span class="nav-text">插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-text">查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-text">删除</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">二叉搜索树的实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86-Union-Find-Set"><span class="nav-text">并查集 Union Find Set</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%AE%9E%E7%8E%B0"><span class="nav-text">并查集的结构和实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E6%93%8D%E4%BD%9C%E5%92%8C%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">并查集的操作和性能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6"><span class="nav-text">合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">性能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E9%AB%98%E5%BA%A6"><span class="nav-text">比较高度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%8E%8B%E7%BC%A9"><span class="nav-text">路径压缩</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">并查集的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E5%BA%94%E7%94%A8-%E9%A3%9F%E7%89%A9%E9%93%BE-POJ-1182"><span class="nav-text">并查集的应用 食物链 (POJ 1182)</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/11/23/tzcxsjjs-02-02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          挑战程序设计竞赛 02 章 02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-23 18:43:42" itemprop="dateCreated datePublished" datetime="2020-11-23T18:43:42+08:00">2020-11-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Reading/" itemprop="url" rel="index"><span itemprop="name">Reading</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>鉴于上篇笔记写完了才发现有相当巨大的篇幅，以后的笔记以一章的每节为单位。</p>
+<p>这一节是数据结构基础，简单介绍了树，进而讲了堆、二叉搜索树和并查集的简单使用。</p>
+<p>数据结构里会添加一些教材的内容，权当复习。</p>
+<p>啊我咕了这么久吗。</p>
+<span id="more"></span>
+<h1 id="树和二叉树"><a href="#树和二叉树" class="headerlink" title="树和二叉树"></a>树和二叉树</h1><p>树又称半线性结构，所以线性表显然是线性结构，图是非线性结构。树是 $n$ 个结点的有限集，具体来说是图的特例（即无回路的连通图，也称自由树 free tree 或有根树 rooted tree）。</p>
+<ul>
+<li>树的基本单位是结点</li>
+<li>当树的结点个数 $n$ 等于 $0$ 时，这棵树为空树</li>
+<li>当 $n &gt; 1$ 时<ul>
+<li>它有且仅有一个结点作为根结点</li>
+<li>根结点之外的所有结点都可以被分为若干个<strong>互不相交</strong>的有限集合，其中每个集合又是一棵树，且是根结点的子树（sub tree）</li>
+</ul>
+</li>
+</ul>
+<p>这是递归语境下树的定义。如果要把一棵树画在纸上，则“结点”就画成结点，“边”就是根结点指向其子树的根结点的线。我们讨论有序树，即根结点的子树从左到右按一个顺序排列，改换顺序将得到不同的一棵树。</p>
+<p>树的常用术语：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">术语</th>
+<th style="text-align:center">定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">结点的度</td>
+<td style="text-align:center">该结点拥有的非空子树的个数</td>
+</tr>
+<tr>
+<td style="text-align:center">树的度</td>
+<td style="text-align:center">树中各结点的度的最大值</td>
+</tr>
+<tr>
+<td style="text-align:center">叶子结点 leaf node</td>
+<td style="text-align:center">度为 0 的结点</td>
+</tr>
+<tr>
+<td style="text-align:center">分支结点 branch node</td>
+<td style="text-align:center">度非 0 的结点</td>
+</tr>
+<tr>
+<td style="text-align:center">（孩）子结点 child node</td>
+<td style="text-align:center">一个结点的子树的根结点，是该结点的子结点</td>
+</tr>
+<tr>
+<td style="text-align:center">（双亲）父结点 parent node</td>
+<td style="text-align:center">一个结点是其子结点的父结点</td>
+</tr>
+<tr>
+<td style="text-align:center">兄弟结点 brother node</td>
+<td style="text-align:center">拥有同一个父结点的子结点互为兄弟结点</td>
+</tr>
+<tr>
+<td style="text-align:center">路径</td>
+<td style="text-align:center">一个结点序列，满足：对其中任一个有后继的结点，该结点是其后继的父结点</td>
+</tr>
+<tr>
+<td style="text-align:center">路径长度</td>
+<td style="text-align:center">路径序列的长度</td>
+</tr>
+<tr>
+<td style="text-align:center">祖先和子孙</td>
+<td style="text-align:center">从一个结点到另一结点存在一条路径，则前者为后者的祖先，后者为前者的子孙</td>
+</tr>
+<tr>
+<td style="text-align:center">结点的层数</td>
+<td style="text-align:center">若规定根结点的层数为 1，对于其他任一个结点，若它在第 $k$ 层，则它的子结点在第 $k + 1$ 层</td>
+</tr>
+<tr>
+<td style="text-align:center">树的深度</td>
+<td style="text-align:center">树中所有结点的最大层数</td>
+</tr>
+<tr>
+<td style="text-align:center">树的宽度</td>
+<td style="text-align:center">树中每一层结点个数的最大值，显然不小于树的度</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>二叉树是这样一种树：</p>
+<ul>
+<li>一棵二叉树为空树，或者</li>
+<li>一棵二叉树包含一个根结点和两个不相交的子树，两个子树都为二叉树，分别称为左子树和右子树</li>
+</ul>
+<p>应该注意的一点是：一棵由两个结点组成的树，在二叉树中可以是两棵树（子结点为左子树或右子树），而在树的定义中，它们都是一样的。</p>
+<p>二叉树的常见种类：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">斜树</td>
+<td style="text-align:center">一棵二叉树，所有分支结点都只有一边的子树，分为左斜树和右斜树</td>
+</tr>
+<tr>
+<td style="text-align:center">满二叉树</td>
+<td style="text-align:center">所有分支结点的度都为 2，且所有叶子结点都在同一层</td>
+</tr>
+<tr>
+<td style="text-align:center">完全二叉树</td>
+<td style="text-align:center">对一棵二叉树按层序遍历的顺序编号，任一个编号的结点位置与等深度的满二叉树中同编号的结点相同</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>二叉树的基本性质：</p>
+<ul>
+<li>度为 2 的结点个数比度为 0 的结点数少 1</li>
+<li>第 $i$ 层上至多有 $2^{i - 1}$ 个结点</li>
+<li>深度为 $k$ 的二叉树至多有 $2^k - 1$ 个结点</li>
+<li>结点数为 $n$ 的完全二叉树，深度为 $\lfloor\log_2 n\rfloor + 1$</li>
+<li>对一棵有 $n$ 个结点的完全二叉树层序编号，对一个编号 $i$，有<ul>
+<li>若 $i &gt; 1$，其父结点编号为 $\lfloor i / 2\rfloor$，否则为根结点</li>
+<li>若 $2i \le n$，则其左子结点编号为 $2i$，否则无左子节点</li>
+<li>若 $2i + 1 \le n$，则其右子结点编号为 $2i + 1$，否则无右子节点</li>
+</ul>
+</li>
+</ul>
+<h1 id="树的存储"><a href="#树的存储" class="headerlink" title="树的存储"></a>树的存储</h1><p>如果是二叉树，可以根据完全二叉树的性质来用线性表去存，但是对于稀疏的或者不够平衡的（直观地说，斜的）树而言十分浪费空间。还有一种线性表存法是，对所有结点进行编号，然后开一张表记录每个结点的父结点。</p>
+<p>用多叉链表来存树可以说是最灵活的方法。每个结点存一个该节点的值，和若干相关结点的地址。根据相关结点的选择，可以分成几种不同的存储方法。比较常用的是二叉链表（存二叉树），每个结点存储它子结点的地址。还有“孩子兄弟”存储方法（存普通树），也是二叉链表，每个结点存储它的第一个子结点，和它右边同层的第一个结点。</p>
+<p>二叉树的二叉链表存法还可以添加一个地址指向父结点，这样查起来会更方便。存的信息越多，往往越省时间。</p>
+<h1 id="优先队列和堆"><a href="#优先队列和堆" class="headerlink" title="优先队列和堆"></a>优先队列和堆</h1><p>利用二叉堆来实现优先队列，而二叉堆是用二叉树实现的。</p>
+<h2 id="优先队列"><a href="#优先队列" class="headerlink" title="优先队列"></a>优先队列</h2><p>优先队列是这样一种数据结构，它可以：</p>
+<ul>
+<li>压入一个数值</li>
+<li>弹出一个数值，这个值是当前队列中最小的</li>
+</ul>
+<h2 id="堆的操作和性能分析"><a href="#堆的操作和性能分析" class="headerlink" title="堆的操作和性能分析"></a>堆的操作和性能分析</h2><p>这样的一棵二叉树是（二叉）堆：</p>
+<ul>
+<li>子结点的值不小于父结点</li>
+<li>是完全二叉树</li>
+</ul>
+<p>那么显然根结点存储着堆里最小的元素（之一）。</p>
+<p>下面简述一下压入和弹出两个操作：</p>
+<ul>
+<li>压入一个值时，在堆的末尾插入该值（使堆的结点紧密排列），然后不断和相对的父结点比较，如果小于父结点则交换两个值，直到整个结构再次成为一个堆。</li>
+<li>弹出一个值时，显然是弹出根结点，接着将堆的最后一个结点移动到根上，然后不断向下交换直到再次得到一个堆。当有两个交换方向时，和较小的值交换，否则仍然有父结点大于子结点的情况出现。</li>
+</ul>
+<p>时间性能上，主要开销在交换元素，而这次数取决于二叉树的高度（深度），如果一共 $n$ 个元素，那么压入和弹出都可以在 $O(\log n)$ 的时间内完成。</p>
+<h2 id="堆的实现"><a href="#堆的实现" class="headerlink" title="堆的实现"></a>堆的实现</h2><p>首先介绍一下线性表存储二叉树的方法。给一棵满二叉树（每个父结点都恰有两个子结点）由根开始，从左到右从上到下编号，容易发现这样的关系：一个编号为 $i$ 的结点，它的左子结点编号为 $2i + 1$，右子结点编号为 $2i + 2$。可以通过死算来得到同样的结果。</p>
+<p>完成了这样的映射，很容易设计出线性存储二叉树的方案。</p>
+<p>另外也可以用二叉链表的方式写，更直观一点。</p>
+<h2 id="STL-里的优先队列"><a href="#STL-里的优先队列" class="headerlink" title="STL 里的优先队列"></a>STL 里的优先队列</h2><p>优先队列可以自定义小顶堆和大顶堆，分别是<br><code>priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;</code><br>和<br><code>priority_queue&lt;int, vector&lt;int&gt;, less&lt;int&gt;&gt;</code>。</p>
+<p>实际上：<br><code>priority_queue&lt;Type, Container, Functional&gt;</code>，分别代表数据类型，容器类型，比较方式，自己写的数据结构需要提供比较符的重载。</p>
+<p>常用的方法有压入、弹出、peak 等等。</p>
+<h2 id="优先队列应用"><a href="#优先队列应用" class="headerlink" title="优先队列应用"></a>优先队列应用</h2><p>优先队列关注的是一个集合中的最值，而忽略其他元素的关系。这里的忽略不代表其他元素可以瞎存。</p>
+<h3 id="Expedition-POJ-2431"><a href="#Expedition-POJ-2431" class="headerlink" title="Expedition (POJ 2431)"></a>Expedition (POJ 2431)</h3><blockquote>
+<p>一辆车需要行驶 $L$ 单位的距离，每行驶 $1$ 单位距离要消耗 $1$ 单位的汽油。卡车原有 $P$ 单位的汽油。途中共 $N$ 个加油站，给出各加油站距起点的距离和可以提供的汽油总量。假设车的油箱足够大，求到终点时的最少加油次数，如不能到达则输出 $-1$。</p>
+</blockquote>
+<p>想一下可以发现，每经过一个加油站，相当于获得了一个可以在随后任何时刻使用的<del>流量</del>加油包，则一旦油不够时，挑出加油包中最大的那个用掉就行了。加油包用完而未到终点时则输出 $-1$。</p>
+<p>最吃性能的显然是“挑出最大的包”这一步。显然用大顶堆实现比较快。</p>
+<h3 id="再谈-Fence-Repair"><a href="#再谈-Fence-Repair" class="headerlink" title="再谈 Fence Repair"></a>再谈 Fence Repair</h3><p>之前不断寻找、合并、替换的算法复杂度是二次的，利用优先队列去获得最小值，只需要 $O(n\log n)$。</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>Binary Search Tree，二叉搜索树，又叫二叉查找树，是一种能够较快地进行数值插入、删除和查询的数据结构。它的实现思想与二分查找类似：对于所有的结点，其值总大于左子树内所有结点的值，总小于右子树内所有结点的值。</p>
+<h2 id="二叉搜索树的操作和性能分析"><a href="#二叉搜索树的操作和性能分析" class="headerlink" title="二叉搜索树的操作和性能分析"></a>二叉搜索树的操作和性能分析</h2><p>在纸上稍微画一遍就可以发现，二叉搜索树的组织结构是一目了然的。下面来看它的插入、查找和删除的实现逻辑。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>在纸上，根据 BST 的结构可以很快地找到应该插入的地方。但是对于代码实现来说，只用一个指针，根据待插入元素和当前结点的大小关系去一层一层往下走，最后找到的只是一个空指针，直接分配新结点的话就会丢掉它。需要拿到父结点才可以插入。</p>
+<p>可以用另外一个指针去记录前驱。也可以采用递归的插入方法，利用一个接收父结点地址 <code>p</code> 和待插入元素 <code>x</code> 、返回新插入结点地址的函数，从根结点开始，若 <code>x</code> 大于 <code>p</code> 的值，则以 <code>p</code> 的右结点为根结点递归调用。终止条件是接收到了空的指针，此时构建一个新的结点并返回其地址。</p>
+<h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><p>查找也可以是递归的。一个接收当前结点和待查找值，返回布尔类型的函数，在接收到空指针时返回 <code>false</code>，接收的指针存值匹配时返回 <code>true</code>，然后按照大小关系递归向下查询。</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除有两种写法。一种是循环删除，一种是递归删除。</p>
+<p>循环删除的方案是：</p>
+<ul>
+<li>待删结点是叶子结点，则直接用空指针覆盖</li>
+<li>待删结点只有一棵子树，则用子树的根结点去向上覆盖待删结点</li>
+<li>待删结点有两棵子树，则找到左子树的最大值或右子树的最小值，用其值覆盖待删结点，再删去它。这里可以稍微递归一下。或者考虑边界条件：待删结点的左（右）子结点就是左（右）子树的最大（小）。</li>
+</ul>
+<p>想一下就知道上面的操作需要待删结点的父结点，要想按值来删除，还需要做几层包装。</p>
+<p>递归删除的方案是：</p>
+<ul>
+<li>待删除结点无左子树，则用右子结点覆盖</li>
+<li>待删结点的左子树无右子树，则用左子结点覆盖（这里避开了上面提到的边界条件）</li>
+<li>以上两种情况都不符合时，用左子树中最大的结点覆盖</li>
+</ul>
+<p>三种操作都只会顺着树的高度走一次，因此时间复杂度是 $O(\log n)$，其中 $n$ 是结点数。</p>
+<h2 id="二叉搜索树的实现"><a href="#二叉搜索树的实现" class="headerlink" title="二叉搜索树的实现"></a>二叉搜索树的实现</h2><p>列一下插入和删除的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">Node&lt;T&gt;* <span class="title">insert</span><span class="params">(Node&lt;T&gt;* p, T x)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (p == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    Node&lt;T&gt;* ret = <span class="literal">nullptr</span>;</span><br><span class="line">    ret = <span class="keyword">new</span> Node&lt;T&gt;;</span><br><span class="line">    ret-&gt;val = x;</span><br><span class="line">    ret-&gt;lchild = ret-&gt;rchild = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (x &lt; p-&gt;val) &#123;</span><br><span class="line">      p-&gt;lchild = <span class="built_in">insert</span>(p-&gt;lchild, x);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (x &gt; p-&gt;val) &#123;</span><br><span class="line">      p-&gt;rchild = <span class="built_in">insert</span>(p-&gt;rchild, x);</span><br><span class="line">      <span class="comment">// 等于的值不插入</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">node *<span class="title">remove</span><span class="params">(node *p, <span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (p == <span class="literal">nullptr</span>) <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (x &lt; p-&gt;val) p-&gt;lchild = <span class="built_in">remove</span>(p-&gt;lchild, x);</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (x &gt; p-&gt;val) p-&gt;rchild = <span class="built_in">remove</span>(p-&gt;rchild, x);</span><br><span class="line">  <span class="comment">// 开始删除当前结点</span></span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (p-&gt;lchild == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    node *q = p-&gt;rchild; <span class="comment">// 提前保存</span></span><br><span class="line">    <span class="keyword">delete</span> p;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (p-&gt;lchild-&gt;rchild == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    node *q = p-&gt;lchild;</span><br><span class="line">    q-&gt;rchild = p-&gt;rchild;</span><br><span class="line">    <span class="keyword">delete</span> p;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    node *q;</span><br><span class="line">    <span class="comment">// 一行找到左子树最大值的父结点，操作缩在 for 循环里</span></span><br><span class="line">    <span class="keyword">for</span> (q = p-&gt;lchild; q-&gt;rchild-&gt;rchild != <span class="literal">nullptr</span>; q = q-&gt;rchild);</span><br><span class="line">    node *r = q-&gt;rchild; <span class="comment">// 左子树最大值结点</span></span><br><span class="line">    q-&gt;rchild = r-&gt;lchild; <span class="comment">// 接上最大值的左子树</span></span><br><span class="line">    <span class="comment">// 保留 p 的子树信息</span></span><br><span class="line">    r-&gt;lchild = p-&gt;lchild;</span><br><span class="line">    r-&gt;rchild = p-&gt;rchild;</span><br><span class="line">    <span class="keyword">delete</span> p;</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> p; <span class="comment">// 似乎不会被执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>STL 中提供了 <code>set</code> 和 <code>map</code> 这两种基于二叉搜索树的数据结构。实际上由于普通二叉搜索树存在退化成链表的可能性，实现好的二叉搜索树会使用一些方法来防止时间复杂度退化，其中一个方法是平衡二叉树。</p>
+<blockquote>
+<p>平衡二叉树<br>显然，普通二叉查找树的结构是和元素的插入次序相关的，如果插入控制得好，比如把一个序列按照升序插入到二叉查找树里，那么最终的结构就是一棵右斜树，操作的复杂度也会退化到 $O(n)$。这样的树看上去是不平衡的，它的确就叫非平衡树。<br>解决非平衡树的方案是，每次插入后进行一次“旋转”，来把不平衡的树变化为尽量平衡的。<br>定义一个结点的不平衡度为其左右子树的深度差，则不平衡度不大于 1 的情况都是可以接收的。如果插入了一个结点后，某个父结点的不平衡度超过了 1，按照插入位置在这个父结点的左/右子结点的左/右子树上，可以分为 LL、LR、RL、RR 四种情况，对应有四种旋转的方法，此处不提。</p>
+</blockquote>
+<h1 id="并查集-Union-Find-Set"><a href="#并查集-Union-Find-Set" class="headerlink" title="并查集 Union Find Set"></a>并查集 Union Find Set</h1><p>并查集是一中用来管理元素分组状态的数据结构，它可以在较高的效率下实现：</p>
+<ul>
+<li>查询两个给定元素是否在同一组</li>
+<li>将两个给定元素所在的组合并为同一个组</li>
+</ul>
+<p>需要注意的是，并查集不能用来将一个组分割。从下面的实现来看就很容易明白这个事实。</p>
+<h2 id="并查集的结构和实现"><a href="#并查集的结构和实现" class="headerlink" title="并查集的结构和实现"></a>并查集的结构和实现</h2><p>并查集使用树实现。若干个元素属于同一组，则从中选择一个元素作为该组的代表。如果两个元素的代表相同，则认为它们在同一组。结合树的结构考虑，把代表安排在根的位置上，其他结点向父结点查询，是比较合适的设计。</p>
+<h2 id="并查集的操作和性能分析"><a href="#并查集的操作和性能分析" class="headerlink" title="并查集的操作和性能分析"></a>并查集的操作和性能分析</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>初始状态下，各个点以自己为代表，即它们互相孤立。</p>
+<h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>合并这个操作需要两个参数，即两个需要合并的元素。注意合并时是将两个组都合起来，而不是增加这两个元素所属的组别（这可以通过容斥的思想解决）。所以，合并两个分组时，是将其中一个的根指向另一个根。一般不采用两个根合并到一个新建根下面的做法，这样会增加处理“非元素根”的相关流程。</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询也需要两个参数。分别查到这两个元素的代表（所在树的根）并比较，若相等则属于同一组。</p>
+<h3 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h3><p>理想情况下，合并和查询的复杂度应该与树的向上寻根相当。但是考虑到树退化的可能，需要进行类似“旋转”的优化。这里提供两个优化方法。</p>
+<h4 id="比较高度"><a href="#比较高度" class="headerlink" title="比较高度"></a>比较高度</h4><p>对于每棵树，记录它的高度 rank，如果高度不同，将 rank 小的合并到 rank 大的树里，新树的 rank 即较大的那个。</p>
+<h4 id="路径压缩"><a href="#路径压缩" class="headerlink" title="路径压缩"></a>路径压缩</h4><p>由于并查集只需要考虑“在同一组”的关系，普通树操作里需要维护的大部分结构都可以丢弃。比如子结点不必要固定。同使用 rank 来保持树高度均衡一样，我们可以直接压缩树的高度。对于不限制子结点数量的树来说，这个操作就是：记住起始结点，并在找到根时，把起始结点直接连到根上。这样，在以后查找这个结点时，需要走过的路径至少不会比第一次长。以上操作在查找时可以顺便完成。</p>
+<p>实现这两个优化后，并查集进行一次操作的平均复杂度是 $O(\alpha(n))$，其中 $\alpha(n)$ 是阿克曼函数的反函数（这里涉及到计算复杂度方面的知识，<del>我也不会</del>），这个复杂度是优于 $O(\log n)$ 的。</p>
+<h2 id="并查集的实现"><a href="#并查集的实现" class="headerlink" title="并查集的实现"></a>并查集的实现</h2><p>存储结构上，我们并不需要像多叉链表那样的结构体。前面提到过，并查集只关心树内结点和根的关系，这样的映射可以直接用一维数组存储。</p>
+<p>直接附上代码（板子）。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fa[<span class="number">100005</span>], rank[<span class="number">100005</span>], n;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    par[i] = i; <span class="comment">// 每个元素初始的代表是自己</span></span><br><span class="line">    rank[i] = <span class="number">0</span>; <span class="comment">// 1 也行，只看相对高度</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查找元素 x 所属的集合代表 </span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">find</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (par[x] == x) <span class="keyword">return</span> x;</span><br><span class="line">  <span class="keyword">return</span> par[x] = <span class="built_in">find</span>(par[x]);</span><br><span class="line">  <span class="comment">// 此处有一个递归，并且是简写</span></span><br><span class="line">  <span class="comment">// 意思是一直找到 x 的根，并把 x 的父结点设为这个根</span></span><br><span class="line">  <span class="comment">// 由于语言特性，这个表达式的值就是根的编号，直接返回</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 合并</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">unite</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 实现时注意赋值形式和合并的关系</span></span><br><span class="line">  <span class="comment">// 谁赋值给了谁是谁合并到谁</span></span><br><span class="line">  x = <span class="built_in">find</span>(x), y = <span class="built_in">find</span>(y);</span><br><span class="line">  <span class="keyword">if</span> (x == y) <span class="keyword">return</span>; <span class="comment">// 异常处理</span></span><br><span class="line">  <span class="keyword">if</span> (rank[x] &lt; rank[y]) &#123;</span><br><span class="line">    par[x] = y;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// rank[x] &gt;= rank[y]</span></span><br><span class="line">    par[y] = x;</span><br><span class="line">    <span class="keyword">if</span> (rank[x] == rank[y]) rank[x]++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">same</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 其实可以不用写</span></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">find</span>(x) == <span class="built_in">find</span>(y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="并查集的应用-食物链-POJ-1182"><a href="#并查集的应用-食物链-POJ-1182" class="headerlink" title="并查集的应用 食物链 (POJ 1182)"></a>并查集的应用 食物链 (POJ 1182)</h2><blockquote>
+<p>有 $N$ 只动物，编号从 1 开始。已知：  </p>
+<ul>
+<li>所有动物都是 $A$，$B$，$C$ 种类的一种</li>
+<li>$A$ 吃 $B$，$B$ 吃 $C$，$C$ 吃 $A$ （明明是食物环）</li>
+</ul>
+<p>关于编号为 $x$ 和 $y$ 的两个动物，按顺序给出以下两种信息，共 $K$ 条：</p>
+<ol>
+<li>$x$ 和 $y$ 属于同一物种</li>
+<li>$x$ 吃 $y$</li>
+</ol>
+<p>这些信息有可能出错。错误信息是：和之前信息矛盾的，或编号溢出的。求错误信息的数量。<br>数据规模：$1 \leq N \leq 50000$，$0 \leq K \leq 100000$</p>
+</blockquote>
+<p>题面或题目本质出现从属关系的问题一般考虑使用并查集，尤其是数据规模较大的时候。但是在这道题里存在三个种类，种类之间还有捕食关系，要仔细考虑并查集中“元素”的选择。</p>
+<p>将元素定为动物编号显然比较难处理，因为通过并查集我们只知道两个动物是否在同一个“组”，如果把这个“组”考虑成物种的话，我们就不知道捕食关系。</p>
+<p>考虑这样选择“元素”：每个元素是：一个编号的动物属于某一物种这个“事实”。每个编号对应三个事实，属于同一分组的两条事实代表：其中一个为真时另一个一定为真。遇到同类关系，则把两个编号的对应关系分别合并；而捕食关系，由于三个种类不必区分名称，可以循环合并一下（就说是食物环吧）。当然，在合并之前要检查这条信息是否错误。</p>
+<p>简单数据结构写完了，下一篇是图论。希望来得及。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/11/23/tzcxsjjs-02-02/" title="挑战程序设计竞赛 02 章 02">https://f-jason.site/blog/2020/11/23/tzcxsjjs-02-02/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/blog/tags/%E3%80%8A%E6%8C%91%E6%88%98%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AB%9E%E8%B5%9B%E3%80%8B/" rel="tag"># 《挑战程序设计竞赛》</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/22/wlbmyjjc-00/" rel="prev" title="网络编码研究基础 00 概览">
+      <i class="fa fa-chevron-left"></i> 网络编码研究基础 00 概览
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/30/algo-problems-01/" rel="next" title="题解 01">
+      题解 01 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

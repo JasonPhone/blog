@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="暑假快结束了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="题解 08">
+<meta property="og:url" content="https://f-jason.site/blog/2021/08/18/algo-problems-08/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="暑假快结束了。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-08-18T12:05:13.000Z">
+<meta property="article:modified_time" content="2021-08-18T12:05:13.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2021/08/18/algo-problems-08/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>题解 08 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2021-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1-07-1004-Link-with-Balls"><span class="nav-text">2021 杭电多校 07 1004 Link with Balls</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1-07-1005-Link-with-EQ"><span class="nav-text">2021 杭电多校 07 1005 Link with EQ</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1-07-1006-Link-with-Grenade"><span class="nav-text">2021 杭电多校 07 1006 Link with Grenade</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1-07-1009-Smzzl-with-Safe-Zone"><span class="nav-text">2021 杭电多校 07 1009 Smzzl with Safe Zone</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1-07-1012-Yiwen-with-Sqc"><span class="nav-text">2021 杭电多校 07 1012 Yiwen with Sqc</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2021/08/18/algo-problems-08/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          题解 08
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-18 20:05:13" itemprop="dateCreated datePublished" datetime="2021-08-18T20:05:13+08:00">2021-08-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Cases/" itemprop="url" rel="index"><span itemprop="name">Cases</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>暑假快结束了。</p>
+<span id="more"></span>
+<h1 id="2021-杭电多校-07-1004-Link-with-Balls"><a href="#2021-杭电多校-07-1004-Link-with-Balls" class="headerlink" title="2021 杭电多校 07 1004 Link with Balls"></a>2021 杭电多校 07 1004 <a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=7047">Link with Balls</a></h1><blockquote>
+<p>$2n$ 个盒子，编号从 1 开始，从第 $2x - 1$ 个盒子可以拿 $kx$ 个球；从第 $2x$ 个盒子可以拿至多 $x$ 个球。$k$ 是非负整数。求一共拿到 $m$ 个球的方法数，答案对 $10^9 + 7$ 取模。<br>$1 \le T\le 10^5, 1\le n, m\le 10^6$</p>
+</blockquote>
+<p>组合数学题。</p>
+<p>看到 $2n$ 一般想到两两配对，然后发现拿 $kx$ 个球的盒子和至多拿 $x - 1$ 个球的盒子可以组合出任意数量的球，而且数量和取法一一对应，那么就是 $n$ 个能拿任意个球的盒子和 $1$ 个能拿 $[0, n]$ 的盒子中取出一共 $m$ 个。</p>
+<p>枚举从 $[0, n]$ 盒子中拿出的数量，对于剩下的用插板法分开，添加 $n - 1$ 个位置表示板子之间为空，得到 $\sum<em>{i = 0}^{n}C</em>{m - i + n - 1}^{n - 1}$，这个式子直接算会超时，用组合数公式化简成 $C<em>{m + n}^{m} - C</em>{m - 1}^{n}$。预处理组合数即可。</p>
+<h1 id="2021-杭电多校-07-1005-Link-with-EQ"><a href="#2021-杭电多校-07-1005-Link-with-EQ" class="headerlink" title="2021 杭电多校 07 1005 Link with EQ"></a>2021 杭电多校 07 1005 <a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=7048">Link with EQ</a></h1><blockquote>
+<p>一排一共 $n$ 个座位，每个人会选择自己的座位，使自己到已经坐下的所有人最小距离尽量大。有多个可选座位时随机选一个，第一个人会随机选座。当最小距离最大是 $1$ 时，认为这排座位已满。给定座位数量，求座位“已满”时座位上总人数的期望值，对 $10^9 + 7$ 取模。<br>$1\le T\le 10^5, 1\le n\le 10^6$</p>
+</blockquote>
+<p>概率 dp，主要想清楚子情况的分类。</p>
+<p>令两端有人时，$n$ 个空座位的期望人数是 $f(n)$，一端有人时的期望是 $g(n)$，那么它们的递推公式：</p>
+<script type="math/tex; mode=display">
+\begin{split}
+  &f(n) = \begin{cases}
+    &0 &n = 1, 2\\[2ex]
+    &f(\lfloor \frac{n}{2}\rfloor) + 1 + f(n - 1 - \lfloor \frac{n}{2}\rfloor) &others
+  \end{cases}\\[2ex]
+
+  &g(n) = \begin{cases}
+    &0 &n = 1\\[2ex]
+    &f(n - 1) + 1 &others
+  \end{cases}
+\end{split}</script><p>以上两个式子，代入情景就能推出来。接下来计算答案。</p>
+<p>对于第一个来的人，有 $n$ 个等可能的选择，遍历求和即可，但是同样会超时。记答案为 $h(n)$ 优化一下式子：</p>
+<script type="math/tex; mode=display">
+\begin{split}
+  h(n) = & \frac{1}{n}\sum_{i = 0}^{n - 1}g(i) + 1 + g(n - 1 - i)\\[2ex]
+  = & 1 + \frac{1}{n}\sum_{i = 0}^{n - 1}g(i) + \frac{1}{n}\sum_{i = 0}^{n - 1}g(n - 1 - i)\\[2ex]
+  = & 1 + \frac{2}{n}\sum_{i = 0}^{n - 1}g(i)
+\end{split}</script><p>维护一下前缀和就好了。</p>
+<h1 id="2021-杭电多校-07-1006-Link-with-Grenade"><a href="#2021-杭电多校-07-1006-Link-with-Grenade" class="headerlink" title="2021 杭电多校 07 1006 Link with Grenade"></a>2021 杭电多校 07 1006 <a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=7049">Link with Grenade</a></h1><blockquote>
+<p>随机向一个方向以速度 $v$ 投掷一颗起爆时间 $t$，杀伤半径 $r$ 的手雷。手雷从被投出的那一刻开始倒计时，求投掷点不被炸到的概率，对 $10^9 + 7$ 取模。<br>三维空间，假设手雷不会触地，加速度 $10m/s^2$。<br>$1\le T\le 10^5, 1\le t, v, r\le 100, t, v, r 是整数$</p>
+</blockquote>
+<p>计算几何题。一开始用随机取弧度去算，一直化不出有理数。后来一查，发现因为面积元的问题，随机弧度获得的点在单位球表面并不是均匀的，我原来的式子还要积出面积。至于证明，是高数下的内容<del>我当然忘光了</del>。</p>
+<p>不会炸到的投掷方向，形成的是一个向下的球冠，算出它与整个球面的面积比即可。</p>
+<p>题解的模型是，把重力加速度反向给投掷点，分开计算投掷点到手雷的距离，得到一个三角形，三边长都已知。可以求出投掷点和手雷位移夹角的三角函数，这个夹角增大时扫过的那块球冠就是安全的部分，诱导公式换一下方向就能算出来。</p>
+<p>如果用我一开始的模型，设速度的水平仰角是 $\theta$，分解速度之后算出让投掷点恰好在爆炸边界的仰角（的正弦），这个仰角把球面分成了两个球冠，求仰角减小时扫过的球冠面积。注意这里的加速度和上一个模型反向，化简比较两个结果的时候有点头疼。</p>
+<p>两个模型其实只是变换一下坐标系的区别。</p>
+<h1 id="2021-杭电多校-07-1009-Smzzl-with-Safe-Zone"><a href="#2021-杭电多校-07-1009-Smzzl-with-Safe-Zone" class="headerlink" title="2021 杭电多校 07 1009 Smzzl with Safe Zone"></a>2021 杭电多校 07 1009 <a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=7052">Smzzl with Safe Zone</a></h1><blockquote>
+<p>平面内，一大一小两个凸包，小凸包是大凸包的子集。小凸包有 $m$ 个顶点，大凸包有 $n$ 个顶点。<br>定义一点到一个凸包的距离为该点到凸包所有边<strong>线段</strong>距离的最小值，求大凸包上任一点到小凸包的最远距离，输出距离的平方，对 $10^9 + 7$ 取模。<br>$1\le T \le 10^4, 3\le m, n\le 10^5, |x|, |y| \le 10^7, \sum m, \sum n\le 10^6, 顶点按逆时针顺序给出$</p>
+</blockquote>
+<p>显然是计算几何。</p>
+<p>首先，不需要考虑大凸包上的各个点，只要考虑顶点即可：如果点在的边和最近的边不平行，显然是端点距离最小；如果平行，可以移动到边的端点。</p>
+<p>然后是旋转卡壳的一个性质（？）。假设我们有这个顶点以及它最近的边，逆时针枚举下一个顶点，最近的边一定也在逆时针方向，注意不一定是相邻的边。而凸包外一个顶点到各边的距离，按时针顺序排下来长得像二次函数，那么可以用双指针的方法去找最近的边，而不是对于每个顶点都枚举所有边。</p>
+<p>最后一定要注意的一点：这题的数据范围允许 double，但是不允许 long long 的平方直接计算距离，比较长度的时候需要用 double，更新答案的时候用对应的 long long 取模。存在丢失精度的问题，但是这题好像不影响。计算几何的题目代码很长，别敲错了。</p>
+<h1 id="2021-杭电多校-07-1012-Yiwen-with-Sqc"><a href="#2021-杭电多校-07-1012-Yiwen-with-Sqc" class="headerlink" title="2021 杭电多校 07 1012 Yiwen with Sqc"></a>2021 杭电多校 07 1012 <a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=7055">Yiwen with Sqc</a></h1><blockquote>
+<p>给定一个小写字母串 $s$，求所有字符在所有子串中出现次数的平方和，答案对 $998244353$ 取模。<br>$1\le T\le 100, |s|\le 10^5, \sum |s|\le 5\times 10^6$</p>
+</blockquote>
+<p>字符串 + 加法卷积（忘记了的词）。就目前接触到的字符串题目，做法其实比其他类型杂乱。</p>
+<p>显然把各种字符分开记录。当场看出了每个字符的贡献应该用差分相关的东西去做，然后推了半天推不出来。赛后看题解用了二次差分，感觉不太能想到。</p>
+<p>推式子的话可以这样做，对于一种字符，记 $s[1, n]$ 是它在各个前缀里出现的次数，有：</p>
+<script type="math/tex; mode=display">
+\begin{split}
+  ans = & \sum_{i = 1}^{n}\sum_{j = i}^{n}(s_j - s_{i - 1})^2\\[2ex]
+      = & \sum_{i = 1}^{n}\sum_{j = i}^{n}s_j^2 + s_{i - 1}^2 - 2\times s_j s_{i - 1}\\[2ex]
+      = & n\sum_{i = 1}^{n}s_i^2 - (\sum_{i = 1}^{n}{s_i})^2 + \sum_{i = 1}^{n}s_i^2\qquad 多项和平方\\[2ex]
+      = & (n + 1)\sum_{i = 1}^{n}s_i^2 - (\sum_{i = 1}^{n}{s_i})^2
+\end{split}</script><p>这样维护一下前缀就可以超时了。对于每个字符提取出来的离散位置，计算出每段的长度，也可以完成。考虑在头加一个 0 统一下标，末尾加一个 n + 1 简化循环。</p>
+<p>注意溢出。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2021/08/18/algo-problems-08/" title="题解 08">https://f-jason.site/blog/2021/08/18/algo-problems-08/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/08/06/algo-problems-07/" rel="prev" title="题解 07">
+      <i class="fa fa-chevron-left"></i> 题解 07
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2021/10/10/local-blog-migrate/" rel="next" title="博客环境迁移">
+      博客环境迁移 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

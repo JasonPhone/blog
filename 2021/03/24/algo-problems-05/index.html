@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="大概平均两个星期一篇的样子？有点慢啊。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="题解 05">
+<meta property="og:url" content="https://f-jason.site/blog/2021/03/24/algo-problems-05/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="大概平均两个星期一篇的样子？有点慢啊。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-24T11:18:40.000Z">
+<meta property="article:modified_time" content="2021-03-24T11:18:40.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2021/03/24/algo-problems-05/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>题解 05 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-888-D-Almost-Identity-Permutations"><span class="nav-text">CF 888 D Almost Identity Permutations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1493-C-K-beautiful-Strings"><span class="nav-text">CF 1493 C K-beautiful Strings</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1496-D-Let%E2%80%99s-Go-Hiking"><span class="nav-text">CF 1496 D Let’s Go Hiking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2019-EC-Final-M-Value"><span class="nav-text">2019 EC Final M Value</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HDOJ-1754-I-Hate-It"><span class="nav-text">HDOJ 1754 I Hate It</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2021/03/24/algo-problems-05/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          题解 05
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-24 19:18:40" itemprop="dateCreated datePublished" datetime="2021-03-24T19:18:40+08:00">2021-03-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Cases/" itemprop="url" rel="index"><span itemprop="name">Cases</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>大概平均两个星期一篇的样子？有点慢啊。</p>
+<span id="more"></span>
+<h1 id="CF-888-D-Almost-Identity-Permutations"><a href="#CF-888-D-Almost-Identity-Permutations" class="headerlink" title="CF 888 D Almost Identity Permutations"></a>CF 888 D <a target="_blank" rel="noopener" href="https://codeforces.com/contest/888/problem/D">Almost Identity Permutations</a></h1><blockquote>
+<p>对一个 $n\in [4, 1000]$ 排列，给定一个整数 $k\in [1, 4]$，表示排列中至少有 $n - k$ 个数的下标（从 1 开始）与自己相等。<br>给定 $n$ 和 $k$，求符合条件的排列个数。</p>
+</blockquote>
+<p>从组合数上看，分情况考虑。$k = 0$ 时有一个；显然不存在 $k = 1$ 的情况；$k = 2$ 时可以挑出 $C_n^2$ 个数用于打乱（两个数只有一种打乱）；剩下两种情况类似。</p>
+<p>但是注意：打乱必须是完全乱序的，否则选出 $k$ 个数打乱可能会退化到 $k - 1$ 的情况。所幸 $k\le 4$，挨个列举出完全乱序的个数即可。</p>
+<h1 id="CF-1493-C-K-beautiful-Strings"><a href="#CF-1493-C-K-beautiful-Strings" class="headerlink" title="CF 1493 C K-beautiful Strings"></a>CF 1493 C <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1493/problem/C">K-beautiful Strings</a></h1><blockquote>
+<p>一个字符串是 k-漂亮的当且仅当各字符出现次数可被 $k$ 整除。<br>给定一个小写字符串 $s$ 和正整数 $k$。求不小于 $s$ 的最小 k-漂亮字符串。若不存在，输出 $-1$。<br>$1\le k \le |s|\le 10^5$</p>
+</blockquote>
+<p>这题的 tag 是 2000。直接贴 tutorial 了。</p>
+<p>显然，字符串的长度必须可以被 $k$ 整除，这样至少存在一个全 z 的串是符合条件的。而且，如果 $s$ 本身就符合条件，那就很轻松了。不然，我们从尾部向前修改以保证找到的结果递增。</p>
+<p>一定会想到分字母统计出现次数。</p>
+<p>从尾部开始枚举这样的位置 $p$：前缀不变，第 $p$ 位变大，是否存在符合条件的串。既然已经保证了大于原串，那么<strong>第 $p$ 位之后的后缀就应该尽量小</strong>，我们根据各字母在前缀中已经出现的次数来贪心即可。</p>
+<p>对于每个在前缀中出现过的字母 $c$，它需要增加 $(k - count_c \% k) \% k$ 次出现来构成<del>漂亮串</del>。如果后缀可以容纳这些增加，那么就可以构造出一个解。关于后缀中多出来的部分长度，必定是 $k$ 的倍数，填上 a 即可。</p>
+<p>这题需要注意的是：一旦确定了第一个更大的位置，后缀就只需要考虑凑齐倍数。</p>
+<p>核心代码（不包含特判）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) &#123;</span><br><span class="line">  <span class="comment">// dispose the suffix count</span></span><br><span class="line">  cnt[s[i] - <span class="string">&#x27;a&#x27;</span>]--;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> ch = s[i] - <span class="string">&#x27;a&#x27;</span> + <span class="number">1</span>; ch &lt; <span class="number">26</span>; ++ch) &#123;</span><br><span class="line">    <span class="comment">// add</span></span><br><span class="line">    cnt[ch]++;</span><br><span class="line">    <span class="comment">// count chars needed to add</span></span><br><span class="line">    <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> ii = <span class="number">0</span>; ii &lt; <span class="number">26</span>; ++ii) sum += (k - cnt[ii] % k) % k;</span><br><span class="line">    <span class="comment">// enough capacity</span></span><br><span class="line">    <span class="keyword">if</span> (sum &lt;= len - <span class="number">1</span> - i) &#123;</span><br><span class="line">      <span class="comment">// add from tail to head</span></span><br><span class="line">      <span class="type">int</span> p = len - <span class="number">1</span>;</span><br><span class="line">      <span class="comment">// from a to z</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="type">int</span> ii = <span class="number">25</span>; ii &gt;= <span class="number">0</span>; --ii) &#123;</span><br><span class="line">        <span class="type">int</span> lim = (k - cnt[ii] % k) % k;</span><br><span class="line">        <span class="keyword">while</span> (p &gt; i &amp;&amp; lim &gt; <span class="number">0</span>) &#123;</span><br><span class="line">          lim--;</span><br><span class="line">          s[p--] = ii + <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// fill blanks</span></span><br><span class="line">      <span class="keyword">while</span> (p &gt; i) &#123;</span><br><span class="line">        s[p--] = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// apply the iteration</span></span><br><span class="line">      s[p] = ch + <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">      cout &lt;&lt; s &lt;&lt; endl;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// restore for next iteration</span></span><br><span class="line">    cnt[ch]--;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="CF-1496-D-Let’s-Go-Hiking"><a href="#CF-1496-D-Let’s-Go-Hiking" class="headerlink" title="CF 1496 D Let’s Go Hiking"></a>CF 1496 D <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1496/problem/D">Let’s Go Hiking</a></h1><blockquote>
+<p>两个人（A 和 B）比赛爬山。山的地形可以用一串数 $p$ 来描述，每个数代表当前位置的高度。<br>每次移动，两人都只能向左或向右移动一个位置。此外，A 只能移动到严格小于当前高度的位置，B 只能移动到严格大于当前高度的位置。在自己的回合内无法移动的人判负。<br>A 先选择起始位置，B 后选，之后 A 先移动。<br>给定一串数，假设两人都采取最优策略，问 A 有几个起始位置可保证自己胜利。<br>$2\le n\le 10^5, 1\le p_i\le n$</p>
+</blockquote>
+<p>比较繁的题。显然讨论的焦点应该放在最长的斜坡上。<em>基于递增或递减对数列分块是比较常见的手法，记得在循环后处理最后一段</em>。</p>
+<p>首先考虑边界情况：当 A 选择斜坡的中间时，B 总能在下面卡住 A。</p>
+<p>接着看最长坡的长度 $l$ （<strong>包含坡顶和坡底</strong>）和拥有这个长度的坡的数量 $c$。A 一定选择坡顶。</p>
+<ol>
+<li>如果 $c &gt; 2$，那么 B 也可以选到一个坡顶，则 A 必输</li>
+<li>如果 $c = 1$，考虑这个坡的位置：<ol>
+<li>在边上，则是边界情况</li>
+<li>不在边上，B 可以卡位。考虑另一侧较短坡的长度：<ol>
+<li>偶数，则 B 可以卡在和短坡底一样的高度</li>
+<li>奇数，则 B 再往下卡一个位置</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>如果 $c = 2$，考虑 $l$ 的奇偶：<ol>
+<li>偶数，必输</li>
+<li>奇数，A 只要向 B 在的那一侧移动即可</li>
+</ol>
+</li>
+</ol>
+<h1 id="2019-EC-Final-M-Value"><a href="#2019-EC-Final-M-Value" class="headerlink" title="2019 EC Final M Value"></a>2019 EC Final M <a target="_blank" rel="noopener" href="https://codeforces.com/gym/102471/problem/M">Value</a></h1><blockquote>
+<p>对两个长 $n$ 的数列 $a$，$b$，设 $A\subset {1, 2, \cdots n}$，计算 $A$ 的分数如下：</p>
+<ol>
+<li>分数初始为 $0$</li>
+<li>$\forall i \in A$，得 $a_i$ 分</li>
+<li>$\forall i, j \in A, i, j \ge 2$，若 $\exists k&gt;1: i^k = j$，扣 $b_i$ 分</li>
+</ol>
+<p>给定 $a$ 和 $b$，求最高的得分。<br>$1\le n\le 10^5, 1\le a_i, b_i\le 10^9$</p>
+</blockquote>
+<p>底数不同的数是不会互相影响的，把底数相同的抽出来枚举即可。</p>
+<h1 id="HDOJ-1754-I-Hate-It"><a href="#HDOJ-1754-I-Hate-It" class="headerlink" title="HDOJ 1754 I Hate It"></a>HDOJ 1754 <a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1754">I Hate It</a></h1><blockquote>
+<p>给定 $n$ 个数（编号从 1 开始）和 $m$ 次操作，操作有以下两种：</p>
+<ol>
+<li><code>U a b</code>：将编号 $a$ 的数更新为 $b$</li>
+<li><code>Q a b</code>：输出编号在 $[a, b]$ 的数的最大值</li>
+</ol>
+<p>$1\le n\le 2\times 10^5, 0&lt;m&lt;5000$</p>
+</blockquote>
+<p>线段树裸题。一般来说是：读数据，建树，查询/修改（lazy tag 或者 push up）。注意把区间设成左闭右开的时候会 TLE，而按照普遍使用的闭区间则不会。尽管左闭右开更美观一点。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2021/03/24/algo-problems-05/" title="题解 05">https://f-jason.site/blog/2021/03/24/algo-problems-05/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/03/06/algo-problems-04/" rel="prev" title="题解 04">
+      <i class="fa fa-chevron-left"></i> 题解 04
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2021/04/06/crc-16-simple-implement/" rel="next" title="CRC-CCITT 的一种实现及简要解释">
+      CRC-CCITT 的一种实现及简要解释 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

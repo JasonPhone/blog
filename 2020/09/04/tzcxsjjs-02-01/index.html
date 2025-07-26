@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="第二章是算法入门，讲了搜索、贪心、DP等等基本算法里的基础部分和简单的数据结构，是为初级篇。 这篇讲搜索、贪心和DP的部分。 多校赛好难。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="挑战程序设计竞赛 02 章 01">
+<meta property="og:url" content="https://f-jason.site/blog/2020/09/04/tzcxsjjs-02-01/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="第二章是算法入门，讲了搜索、贪心、DP等等基本算法里的基础部分和简单的数据结构，是为初级篇。 这篇讲搜索、贪心和DP的部分。 多校赛好难。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-09-04T12:46:55.000Z">
+<meta property="article:modified_time" content="2020-09-04T12:46:55.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta property="article:tag" content="《挑战程序设计竞赛》">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/09/04/tzcxsjjs-02-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>挑战程序设计竞赛 02 章 01 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A9%B7%E7%AB%AD%E6%90%9C%E7%B4%A2"><span class="nav-text">穷竭搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%92%E5%BD%92"><span class="nav-text">递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88"><span class="nav-text">栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-text">队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2-DFS"><span class="nav-text">深度优先搜索 DFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E5%92%8C%E9%97%AE%E9%A2%98"><span class="nav-text">部分和问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lake-Counting-POJ-2386"><span class="nav-text">Lake Counting (POJ 2386)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%BD%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2-BFS"><span class="nav-text">宽度优先搜索 BFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%B7%E5%AE%AB%E6%9C%80%E7%9F%AD%E8%B7%AF"><span class="nav-text">迷宫最短路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DFS-%E5%92%8C-BFS"><span class="nav-text">DFS 和 BFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E7%89%B9%E6%AE%8A%E7%8A%B6%E6%80%81"><span class="nav-text">枚举特殊状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%AA%E6%9E%9D"><span class="nav-text">剪枝</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83"><span class="nav-text">贪心</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E5%B8%81%E9%97%AE%E9%A2%98"><span class="nav-text">硬币问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98"><span class="nav-text">区间调度问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Best-Cow-Line-POJ-3617"><span class="nav-text">Best Cow Line (POJ 3617)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Saruman%E2%80%99s-Army-POJ-3069"><span class="nav-text">Saruman’s Army (POJ 3069)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fence-Repair-POJ-3253"><span class="nav-text">Fence Repair (POJ 3253)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-DP"><span class="nav-text">动态规划 (DP)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2%E4%B8%8E-DP"><span class="nav-text">记忆化搜索与 DP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#01%E8%83%8C%E5%8C%85"><span class="nav-text">01背包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#01%E8%83%8C%E5%8C%85-%C2%B7-%E5%A4%A7"><span class="nav-text">01背包 · 大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97-LCS"><span class="nav-text">最长公共子序列 LCS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%92%E6%8E%A8%E4%B8%8E-DP"><span class="nav-text">递推与 DP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85-01"><span class="nav-text">完全背包 01</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85-02"><span class="nav-text">完全背包 02</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E9%83%A8%E5%88%86%E5%92%8C"><span class="nav-text">多重部分和</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3"><span class="nav-text">3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97-LIS"><span class="nav-text">最长上升子序列 LIS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E9%97%AE%E9%A2%98%E7%9A%84-DP"><span class="nav-text">计数问题的 DP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%92%E5%88%86%E6%95%B0"><span class="nav-text">划分数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E9%9B%86%E7%BB%84%E5%90%88%E6%95%B0"><span class="nav-text">多重集组合数</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/09/04/tzcxsjjs-02-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          挑战程序设计竞赛 02 章 01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-04 20:46:55" itemprop="dateCreated datePublished" datetime="2020-09-04T20:46:55+08:00">2020-09-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Reading/" itemprop="url" rel="index"><span itemprop="name">Reading</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>第二章是算法入门，讲了搜索、贪心、DP等等<strong>基本算法</strong>里的<strong>基础部分</strong>和<strong>简单的</strong>数据结构，是为初级篇。</p>
+<p>这篇讲搜索、贪心和DP的部分。</p>
+<p>多校赛好难。</p>
+<span id="more"></span>
+<h1 id="穷竭搜索"><a href="#穷竭搜索" class="headerlink" title="穷竭搜索"></a>穷竭搜索</h1><p>最暴力的算法，完全依靠计算机的算力解题。对于有先后状态的可能解集合，有先根据某个状态的一种可能转移搜索下去的深度优先搜索，和先搜索某个状态的所有可能转移的宽度优先搜索。</p>
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><p>递归指在一个函数再次调用该函数。</p>
+<p>对于拥有子状态的问题，利用递归的算法可以牺牲时间和空间，换来思路比较清晰的代码。</p>
+<p>例如求斐波那契数列可以采用递归，注意递归函数一定要有停止条件</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">fib</span><span class="params">(<span class="type">long</span> <span class="type">long</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> n;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">fib</span>(n - <span class="number">1</span>) + <span class="built_in">fib</span>(n - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于上述代码运行时有参数相同的 <code>fib(n)</code> 被调用了许多次，可以将它先记录下来。这是后面会见到的DP思路。</p>
+<h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><p>一个先进后出的数据结构，通过 <code>push</code> 将一个元素进栈，<code>pop</code> 将栈顶的元素取出。C++标准库 <code>&lt;stack&gt;</code> 的栈需要用 <code>stack::top</code> 来获得栈顶的元素，<code>stack::pop</code> 只是移出元素。</p>
+<p>栈的性质被用来保存调用函数时的“现场”。调用者的相关数据和参数被push到栈中，被调用的函数处理结束后，记录返回的地址，把栈顶不再使用的数据清除，即可回到调用函数的位置，继续执行之后的语句。</p>
+<p>显然规模较大的递归会让调用栈增长到相当高的地步，调用函数的开销不仅占用时间，还会花费很大的栈空间。实际上前例求斐波那契数列的递归算法在 n = 40 时就已经需要很长的时间来完成执行。它的时间复杂度是 $O(2^n)$。</p>
+<h2 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h2><p>一个先进先出的数据结构。C++标准库的队列在 <code>&lt;queue&gt;</code> 中定义，其中 <code>queue::push</code>、<code>queue::pop</code>、<code>queue::front</code>，分别用来存入、移出、获得元素。</p>
+<h2 id="深度优先搜索-DFS"><a href="#深度优先搜索-DFS" class="headerlink" title="深度优先搜索 DFS"></a>深度优先搜索 DFS</h2><p>深搜从当前状态的一个可能状态开始不断转移，直到无法转移为止，再从下一个可能状态开始重复。显然这样不断嵌套下去的搜索方法适合用递归实现。</p>
+<p>递归可以用来解决规模较小的<a target="_blank" rel="noopener" href="https://oi-wiki.org/dp/knapsack/">背包问题</a>。</p>
+<p>突然感觉<a target="_blank" rel="noopener" href="https://oi-wiki.org/">OI Wiki</a>上的好像更全啊。啃完这本考虑去通读一下。（能吗</p>
+<h3 id="部分和问题"><a href="#部分和问题" class="headerlink" title="部分和问题"></a>部分和问题</h3><blockquote>
+<p>给定 $n$ 个正整数，判断是否能从中选出若干个数，使它们的和恰为 $k$。</p>
+</blockquote>
+<p>显然暴力一点的做法是从第一个数开始，每个数选择取或不取，一直到最后一个数，此时和为 $k$ 则可以。所有可能都搜完之后还没有遇见可行解，则不行。最差情况是一直搜到最后一种组合都没有可行解，复杂度 $O(2^n)$。在 $n$ 较小的情况下用DFS可解。</p>
+<p>大概代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">dfs</span><span class="params">(当前位置, 和)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (到最后一个数)<span class="keyword">return</span> 和 == k;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">dfs</span>(下个位置, 和); <span class="comment">// 不选当前数</span></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">dfs</span>(下个位置, 和 + 当前数); <span class="comment">// 选当前数</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Lake-Counting-POJ-2386"><a href="#Lake-Counting-POJ-2386" class="headerlink" title="Lake Counting (POJ 2386)"></a>Lake Counting (POJ 2386)</h3><blockquote>
+<p>大小为 $N \times M$ 一个园子积了水。八连通 (有公共顶点) 的积水块被视作连在一起，求园子里共有多少片互相不连通的水洼。</p>
+</blockquote>
+<p>从一个有积水且没被搜过的块开始，深搜连接的块，把搜索到的地方记录一下供后续检查。搜完一次即多一片连接的水洼，直到所有积水处都被搜索过。最差情况每个格子被搜索一次，复杂度 $O(8 \times N \times M) = O(N \times M)$。</p>
+<p>考虑到输入的积水情况不需要保留，为了简化判断流程，省去记录表的空间，可以每搜到一块积水就把它换成旱地，直到整片园子没有积水。</p>
+<h2 id="宽度优先搜索-BFS"><a href="#宽度优先搜索-BFS" class="headerlink" title="宽度优先搜索 BFS"></a>宽度优先搜索 BFS</h2><p>宽搜优先处理当前状态所有可能的“下一步”，“均匀地扩散”到覆盖所有状态。它不需要一次走到头，所以不使用递归来实现。宽搜使用队列来存储将要搜索的状态。</p>
+<p>搜索时，宽搜将初始状态入队，此后则不断从队首取出状态，同时将该状态可以转移到的未搜索状态入队，直到找到解或队列为空。由队列的性质可知状态是按照距初始状态由近到远的顺序被搜索的。</p>
+<h3 id="迷宫最短路"><a href="#迷宫最短路" class="headerlink" title="迷宫最短路"></a>迷宫最短路</h3><blockquote>
+<p>给定一个矩形迷宫。迷宫由通道和墙壁组成，从一个通道可以走到与它四连通的通道。求出从起点到终点需要走的最短步数。输入保证从起点可以走到终点。</p>
+</blockquote>
+<p>由宽搜的搜索顺序可以发现，如果搜索到了终点，则搜索路径一定是最短的。此处一个状态可以由坐标来描述。</p>
+<p>用一张表来标记搜索到的状态。将01标记换成路径长度，这张表同时可以用来记录从起点到该格的最短步数，此时“未搜索”需要用充分大的常数来标记。注意溢出。</p>
+<p>大概代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bfs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  queue&lt;point&gt; q;</span><br><span class="line">  初始化表;</span><br><span class="line">  起点入队;</span><br><span class="line">  记录起点;</span><br><span class="line">  <span class="keyword">while</span> (!q.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    取出前端状态;</span><br><span class="line">    <span class="keyword">if</span> (该状态是终点) <span class="keyword">break</span>;</span><br><span class="line">    将该状态可转移到的未搜索状态入队, 同时记录到这些状态的距离;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> 到终点的距离;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果要记录到终点的路径，只需要在搜索到的状态里标记好它的上一个状态，搜索结束后就可以从终点倒序回到起点。部分情况下最短的路径取决于宽搜时状态入队的顺序。</p>
+<h2 id="DFS-和-BFS"><a href="#DFS-和-BFS" class="headerlink" title="DFS 和 BFS"></a>DFS 和 BFS</h2><p>深搜和宽搜都可以遍历所有的状态，从能解决问题的角度来看，是可以互相替换的。但是两者各有更高效的利用方向。</p>
+<p>对于需要搜索所有状态的问题，深搜需要的空间比宽搜要小。宽搜需要一个队列来存放所有的状态，而深搜只需要系统提供的栈。</p>
+<p>对于搜索最短路径的问题，宽搜更有优势。宽搜搜到的第一个解必定是转移次数最少的解，而深搜搜到的第一个解取决于每次转移时的方向。只有对所有的可行解继续遍历一遍，深搜才能给出最近的解。但是也有使用宽搜的转移顺序，同时尽量节约空间的“<a target="_blank" rel="noopener" href="https://oi-wiki.org/search/iterative/">迭代加深深度优先搜索</a>（ID-DFS）”，在此书的4.5节。</p>
+<h2 id="枚举特殊状态"><a href="#枚举特殊状态" class="headerlink" title="枚举特殊状态"></a>枚举特殊状态</h2><p>C++ 标准库中提供了一些用来代替简单深搜的函数，比如用<a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/algorithm/next_permutation"><code>next_permutation</code></a>来对所有元素进行全排列。</p>
+<p>一些其他的可行解空间生成可以使用特殊写法，比如用位运算生成 $C_m^k$ 的所有排列，在此书的3.2节。</p>
+<h2 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h2><p>我们有的时候不需要知道所有可行解而只想知道“可不可行”，也有的时候发现穷竭搜索在一个已经不可解的状态下面到处乱搜。对于第一种情况，在搜到第一个解时结束搜索即可省去时间。而第二种情况需要更加精细的剪枝策略。</p>
+<p>例如深搜解决部分和问题时，如果各元素都非负，那么一旦和超过了 $k$，后续所有的选择就都不可能把和拉下来，直接结束这部分的搜索就可以省去不必要的时间。</p>
+<p>更加难懂的搜索手段在此书4，5节。</p>
+<blockquote>
+<p>栈内存和堆内存<br>为了保存调用现场，主调函数的所有局部变量都要储存起来，这个储存位置叫做栈内存。而使用 <code>new</code> 和 <code>malloc</code> 获得的内存在堆内存里。<br>栈内存一经分配则无法扩大，也即函数递归的层数是有极限的。Windows下一般的大小为1MB，通常允许上万次递归。Java可以在执行程序时指定栈大小，C++可以在编译时添加 <code>-Wl,--stack=536870912</code> 分配栈区大小为512MB。<br>出于减少命名重复和提高耦合度等原因，不推荐使用全局变量，但是对算法竞赛这样规模的代码，大可以为了方便而破戒，也不会带来太麻烦的调试成本。<br>为了给递归留出空间，巨大的变量可以放在堆上。大变量通常会定义得比数据规模上界再多一点点，给字符串后缀0和1-n下标留点余地。</p>
+</blockquote>
+<hr>
+<h1 id="贪心"><a href="#贪心" class="headerlink" title="贪心"></a>贪心</h1><p>可以用贪心解决的问题一般有这样的特点：遵循某个规则，选择每个部分状态最优的转移方向，最终能到达整体的最优解。</p>
+<h2 id="硬币问题"><a href="#硬币问题" class="headerlink" title="硬币问题"></a>硬币问题</h2><blockquote>
+<p>有1元、5元、10元、50元、100元、500元面额的硬币若干枚，用来支付 $A$ 元，求最少需要的硬币枚数。输入保证有解。</p>
+</blockquote>
+<p>傻子（无意冒犯，我以前也是<del>现在还是</del>）才会搜索出所有可行解然后取最小值。显然优先选择大额硬币就能获得总数最少的解。</p>
+<p>上例即最简单的贪心解法。它有目的地选择某个转移方向并且相信最终的状态一定是最优解。而之前的深搜和宽搜选择转移方向的策略，只是以“最终能遍历所有方向”为目标。</p>
+<p>此题也可以看作一个背包问题。选择一定数量的硬币使最大面额等于 $A$，或者选择 $A$ 面额的硬币使数量最小。背包问题通常的动态规划解法也是遍历了多个可行解，效率上不如贪心。</p>
+<h2 id="区间调度问题"><a href="#区间调度问题" class="headerlink" title="区间调度问题"></a>区间调度问题</h2><blockquote>
+<p>有 $n$ 项任务，每项任务在 $s_i$ 时刻开始，在 $t_i$ 时刻结束，对每项工作都可以选择参与与否，但不可中途停止。参与的时间不能重叠，上一项任务开始和和下一项任务结束的时刻相同也是不允许的。给出各任务开始和结束的时刻，求一种选择策略使能参与的工作最多。</p>
+</blockquote>
+<p>贪心的策略有时是比较难找的。这题有几个典型的贪心策略：</p>
+<ol>
+<li>在可选任务里选择开始时间最早的</li>
+<li>在可选任务里选择结束时间最早的</li>
+<li>在可选任务里选择用时最短的</li>
+<li>在可选任务里选择与其他任务重叠最少的</li>
+</ol>
+<p>仔细思考一下各个策略有没有反例:</p>
+<ol>
+<li><del>一个长任务从头到尾覆盖了多个可以连续执行的短任务</del></li>
+<li><del>这是对的</del></li>
+<li><del>一个短任务和两个更长的任务重叠</del></li>
+<li><del>通过多次重复相同起止时间的任务掩盖最优解</del></li>
+</ol>
+<p>代码实现上，对所有任务按结束时间排一个升序，记一下当前最后一个结束时间，然后挨个选就可以了。</p>
+<blockquote>
+<p>贪心方法的证明<br>选取了相同数量的任务时，按贪心算法选取的任务结束时间不会更晚。<br>若存在更优的方案，则在选择结束后，更优的方案选择的任务比贪心多。设贪心选了 $n$ 个，更优选了 $n + k$ 个，则在都选了 $n$ 个时，贪心结束时间不晚于更优，那么更优的后 $k$ 个任务也可以被贪心选择，贪心并未结束选择。<br>则可反证不存在更优的方案。</p>
+</blockquote>
+<p>一般做题时，尤其是打比赛做题时，不需要详细的证明来背书，只要能 A 就行了。但拿不准或者 WA 了的时候还是仔细考虑一下吧，虽然不觉得这个情况下能证出来什么东西。</p>
+<h2 id="Best-Cow-Line-POJ-3617"><a href="#Best-Cow-Line-POJ-3617" class="headerlink" title="Best Cow Line (POJ 3617)"></a>Best Cow Line (POJ 3617)</h2><blockquote>
+<p>给定一个字符串 $S$，从空字符串开始构造一个等长的字符串 $T$，以下列任意操作构造：  </p>
+<ol>
+<li>从 $S$ 的头部删去一个字符，添加到 $T$ 的尾部  </li>
+<li>从 $S$ 的尾部删去一个字符，添加到 $T$ 的尾部</li>
+</ol>
+<p>求字典序最小的 $T$。</p>
+</blockquote>
+<p>首先想到的是比较当前 $S$ 的头尾，把字典序更小的字符加到 $T$ 的尾部。如果遇到相同的字符如何处理？</p>
+<p>遇到首尾是相同字符时，为了使较小的字符更早地加入到 $T$ 中，需要比较第二个和倒数第二个字符的大小，直到遇到不同的字符，把较小字符那一侧的首/尾字符加入 $T$。</p>
+<p>具体实现，可以用一个字符串和双指针（四指针？），也可以用原字符串和一个翻转的字符串，这样更方便表示。中止条件可以是两个指针相遇，也可以是 $T$ 的长度和 $S$ 相等。</p>
+<p>一般情况下，求字典序最小的问题可以使用贪心，也可以在搜索时向最小字符转移。</p>
+<p>（这题会卡输出，一行 80 个字符。）</p>
+<h2 id="Saruman’s-Army-POJ-3069"><a href="#Saruman’s-Army-POJ-3069" class="headerlink" title="Saruman’s Army (POJ 3069)"></a>Saruman’s Army (POJ 3069)</h2><blockquote>
+<p>直线上有若干点，从中选出一部分点打上标记。对每个点，以它为圆心的一个半径内（包括自己）必须有至少一个被标记的点。给定点的总数和半径，求被标记的点数量的最小值。</p>
+</blockquote>
+<p>这个题面是很精简的模型题，可以用到比如说（直的）城墙上设置望楼，（直的）防线上设置哨塔，（一维的）草坪上设置灌溉器。</p>
+<p>这样的最大覆盖题显然要充分利用各个已经标记的点。首先第一个点不用标记，向后走一个半径，遇到的<strong>最后一个</strong>点打上标记，再从它开始走一个半径，遇到的<strong>下一个</strong>点，处理方式和第一个点相同，如此一直到走完所有的点。</p>
+<p>需要两个循环来让指针向后走。要注意的是循环停止的条件，首先是下标不越界，然后为了直观，走到的距离不大于上一个记录的距离加上半径，之后是指针加减 1 的操作。两个记录，一个是“开始的点”，另一个是打上标记的点。这样一个“圆”覆盖的范围只需要标记一个点。注意边界的处理。</p>
+<h2 id="Fence-Repair-POJ-3253"><a href="#Fence-Repair-POJ-3253" class="headerlink" title="Fence Repair (POJ 3253)"></a>Fence Repair (POJ 3253)</h2><blockquote>
+<p>为了准备维修栅栏的材料，需要切割一块很长的木板。不考虑切割损耗，木板的长度正好是所有木料的长度和。切断一块木板的代价为该木板的长度。求最小的总代价。例如将长度 $21$ 的木板切割成 $5、8、8$ 三段的最小代价为 $21 + 13 = 34$。</p>
+</blockquote>
+<p>代价和长度有关，那么一段木料被切出来得越迟，它对代价的贡献就越久。显然我们希望这样的木料越短越好。那么从最后一次切割回溯，每次最短的和次短的拼在一起计入代价，就可以得到最小的代价。这也是一种贪心。</p>
+<p>大概实现，每次找出最短和次短，将它们拼合，计入代价，然后将拼回去的木板放到原来的数组里直到剩余木板为 1。这里之前的两个位置已经用过了，可以被新木板覆盖，或者记录一下跳过。更好的做法是拼好之后和数组最后一个元素交换一下，这样遍历的开销会递减，剩余木板的数量也可以当作遍历的停止条件。</p>
+<blockquote>
+<p>霍夫曼编码 (Huffman Code)<br>由于一条信息中各字符出现的次数不尽相同，用同一长度的编码去表示每个字符，出现次数较少的那些字符难免会引起浪费。霍夫曼编码提供了这样一种编码方式：对于出现多次的字符，用较短的编码表示，而出现次数少的字符可以用长一点的编码。只要解决不同长度编码间的识别问题，这样的编码方式就可以极大地节省空间。事实上，霍夫曼编码是码字长度为整数时最优的编码方案。<br>显然霍夫曼编码是由各字符频率确定的。利用二叉树构造霍夫曼编码时，将频率最低的两个字符作为子结点合并，它们的频率和为父结点的频率。以父结点为代表，继续参与构造，直到所有的结点都被包含在一棵二叉树里。编码时，从根开始，向右为 0，向左为 1，直到遇到一个字符，所经过的 01 序列就是该字符的霍夫曼编码。这些 01序列可以不加分隔地连在一起，表示整条信息。只要序列没有缺损，就不会出现错误识别的情况。<br>（这个怎么证明？）</p>
+</blockquote>
+<hr>
+<h1 id="动态规划-DP"><a href="#动态规划-DP" class="headerlink" title="动态规划 (DP)"></a>动态规划 (DP)</h1><p>动态规划，Dynamic Programming，DP，是常考<del>炸</del>的题型。当一个问题的子状态有马尔可夫性时，它可以使用 DP 求解。马尔可夫性指子状态的后续转移概率与且仅与该子状态有关，而与之前的状态和到达该子状态的路径无关。大概是这样。又称无后效性，即一个子状态有最优解后，之后的各种决策不会影响它最优解的效果。通俗一点说，就是可以拿到一个递推公式。当然如果能算出通项的话还是直接代更快。</p>
+<h2 id="记忆化搜索与-DP"><a href="#记忆化搜索与-DP" class="headerlink" title="记忆化搜索与 DP"></a>记忆化搜索与 DP</h2><p>所谓记忆化搜索，就是记住之前搜索过的状态，在下一次遇到时直接查询搜索历史，减少重复搜索的开销。</p>
+<h3 id="01背包"><a href="#01背包" class="headerlink" title="01背包"></a>01背包</h3><blockquote>
+<p>有若干个给定价值和重量的物品，从中选择总重量不超过 $W$ 的物品，使价值和最大。</p>
+</blockquote>
+<p>首先能想到暴搜，对每个物品都向选和不选两个方向转移。大概代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从search(0, 空包容量)开始</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">search</span><span class="params">(当前物品序号, 当前剩余容量)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> res;</span><br><span class="line">  <span class="keyword">if</span> (没有物品了) &#123;</span><br><span class="line">    res = <span class="number">0</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (当前物品放不进去) &#123;</span><br><span class="line">    res = <span class="built_in">dfs</span>(下一个物品序号, 当前剩余容量);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 在取和不去当前物品中选最优</span></span><br><span class="line">    res = <span class="built_in">max</span>(<span class="built_in">dfs</span>(下一个物品序号, 当前剩余容量), <span class="built_in">dfs</span>(下一个物品序号, 当前剩余容量 - 当前物品重量) + 当前物品价值);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>前面已经讲过这类的搜索是 $O(2^n)$ 的，一旦物品稍微多一点就会炸。</p>
+<p>为了优化这个算法，先把它的递归树画出来看一下。如果样例不是那么巧，很容易发现部分中间结点拿到了一样的参数，而且之后长出来的子树也是完全一样的。实际含义就是无论之前是怎么取的，当取到同一个物品，且剩余同样的空间时，后续的最优解都是一样的。很容易回推得到出现这样局面的原因是之前有若干个物品，其中一个物品的重量等于其它物品的和。那么把这样的状态记录一下，下次遇到时直接查询结果，就可以大大节约时间。此处只需要一张 $n \times W$ 的表就可以存下所有搜索结果（可能是相当稀疏的），复杂度为 $O(nW)$。注意初始化。</p>
+<p>这就是记忆化搜索。</p>
+<p>然而，如果不小心写成了这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">search</span><span class="params">(当前序号, 当前容量, 当前总价)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> res;</span><br><span class="line">  <span class="keyword">if</span> (没有物品了) &#123;</span><br><span class="line">    res = 当前总价;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (当前物品放不进去) &#123;</span><br><span class="line">    res = <span class="built_in">dfs</span>(下个序号, 当前容量, 当前总价);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 在取和不去当前物品中选最优</span></span><br><span class="line">    res = <span class="built_in">max</span>(<span class="built_in">dfs</span>(下个序号, 当前容量, 当前总价), <span class="built_in">dfs</span>(下个序号, 当前容量 - 当前重量, 当前总价 + 当前价值));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样多拿参数比较方便剪枝，但是这样拿到同样参数的结点就没了。</p>
+<p>上一段代码的每个调用状态都是和之前的状态通过 <code>当前总价</code> 增强了联系。它和上上段代码是什么关系呢？第一段代码尽量剥离了子状态和之前状态之间的关系，只要两个参数一样，后续的解法就是一样的。而第二段代码多了一个参数，这参数暗示了之前可能选择的物品，这样一来就从另一个角度描述了这个状态：具体的选择方案。实际上这题不需要给出方案，也就没必要浪费空间记录到每个状态的路径。两段代码结构很像，但是第一段的 <code>res</code> 记录后续能选择的最大价值，而第二段的记录一直以来能拿到的最大价值，可以写成全局变量。含义几乎是相反的。</p>
+<p>接下来我们看一下记录搜索用到的这个表。</p>
+<p>记这张表为 $dp[i][j]:=从第 i 个开始挑选总重小于 j 的物品时，可以获得的最大价值$。于是有如下递推关系：</p>
+<ul>
+<li>从第 $n$ 个（下标为 $0$ 到 $n - 1$）开始挑选时，总为 $0$。</li>
+<li>从第 $i$ 个物品开始挑选<ul>
+<li>如果当前物品超重，则当前可挑选最大价值，和从下一个物品开始挑选是一样的。</li>
+<li>如果当前物品可选，则当前可挑选的最大价值，是不挑选当前物品，和挑选当前物品两个方向中的最大值。</li>
+</ul>
+</li>
+</ul>
+<p>换到公式来说就是：</p>
+<script type="math/tex; mode=display">
+dp[n][j] = 0\\\\[2ex]</script><script type="math/tex; mode=display">
+dp[i][j] = \begin{cases}
+  dp[i + 1][j] & j < w[i]\\\\[2ex]
+  \max(dp[i + 1][j], dp[i + 1][j - w[i]] + v[i]) & (其他情况)\\\\[2ex]
+\end{cases}</script><p>那么只要把这张表算出来就行了，用不用递归的搜索其实无所谓。随着递推，第一个坐标减小，第二个增大或不变。大概代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt;= W; ++j) &#123;</span><br><span class="line">    <span class="keyword">if</span> (j &lt; w[i]) &#123;</span><br><span class="line">      dp[i][j] = dp[i + <span class="number">1</span>][j];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      dp[i][j] = <span class="built_in">max</span>(dp[i + <span class="number">1</span>][j], dp[i + <span class="number">1</span>][j - w[i]] + v[i]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后的答案存在从第一个开始挑选重量 $W$ 的位置，就是 <code>dp[0][W]</code>。这显然比递归更加简洁。</p>
+<p>改变 DP 数组的定义就可以改变填充 DP 数组的方向。定义 $dp[i + 1][j]:=前i个物品中选择总重j以内的最大总价$ 就可以从左上向右下填充数组。</p>
+<p>以上是从递推的角度讨论 DP。如果是从状态转移的角度看，一个当前状态可以通过取和不取向两个状态转移，即“前 $i$ 个中取重量 $j$ 以内”向“前 $i + 1$ 个中取重量 $j + w[i]$ 以内”（取）和“前 $i + 1$ 个中取重量 $j$ 以内”（不取）两个状态转移。其中取的转移需要看能不能装得下。转移过去后是否覆盖目标状态，则是看哪个更大。</p>
+<p>为了节省内存，可以尝试压缩空间。注意到每次转移只涉及数组的两行，可以把整个 DP 数组简化到只有两行，通过一个跳转来实现“滚动”填充。这需要 $i$ 的状态完全转移到 $i + 1$。</p>
+<p>也可以压成一行。观察填充 $dp[i + 1][j]:=从前i个物品中取不超过j重量的最大总价$ 的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt;= W; ++j) &#123;</span><br><span class="line">    <span class="keyword">if</span> (j &lt; w[i]) &#123;</span><br><span class="line">      dp[i + <span class="number">1</span>][j] = dp[i][j];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      dp[i + <span class="number">1</span>][j] = <span class="built_in">max</span>(dp[i][j], dp[i][j - w[i]] + v[i]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在装不下当前物品时，没有发生更新而是直接继承上一个状态，能装下当前物品时，则更新到最优解。此时可以发现：滚动数组中“上一行”的某个数据如果仍然是最优解，它的数据是可以被保留到“这一行”的，否则在“这一行”中会被新的最优解替换。那么就可以再砍掉一行：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> j = w; j &gt;= w[i]; --j) &#123;</span><br><span class="line">    dp[j] = <span class="built_in">max</span>(dp[j], dp[j - w[i]] + v[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意循环方向变了，因为01背包每次转移依赖“上一行”的前项。</p>
+<h3 id="01背包-·-大"><a href="#01背包-·-大" class="headerlink" title="01背包 · 大"></a>01背包 · 大</h3><p>如果你的背包变得特别大，之前 $O(nW)$ 的复杂度就会出问题。不妨换个思路。以前是同重量取最大价值，现在是同价值取最小重量，那么复杂度会变成 $O(n\sum_i v_i)$。</p>
+<p>则定义 $dp[i+1][j]:=前i个物品中挑选价值为j的最小重量$，这样填充结束后，答案就是使 $dp[n][j]\leq W$ 的最大的 $j$。</p>
+<p>则前 $i$ 个物品中选总价为 $j$ 的状态由来自两个方向的转移得到：</p>
+<ul>
+<li>前 $i-1$ 个物品中选总价为 $j$ 的重量</li>
+<li>前 $i-1$ 个物品中选总价为 $j-v[i]$，加上第 $i$ 个的重量</li>
+</ul>
+<p>注意初始化时还要引入充分大。</p>
+<p>两个方向取最小值覆盖。</p>
+<p>当背包容量和全部价值和都相当大的时候就没了。</p>
+<h3 id="最长公共子序列-LCS"><a href="#最长公共子序列-LCS" class="headerlink" title="最长公共子序列 LCS"></a>最长公共子序列 LCS</h3><blockquote>
+<p>给定两个字符串，长度分别是 $n$、$m$，求它们最长公共子序列的长度。</p>
+</blockquote>
+<p>Longest Common Subsequence 是经典的字符串问题。</p>
+<p>用 DP 解决时可以定义 $dp[i+1][j+1]:=串S的前i子串和串T的前j子串对应的LCS长度$。则两个子串各增一个字符时，新的字符串的 LCS 可能是：</p>
+<ul>
+<li>旧 LCS 加上新字符</li>
+<li>$S$ 的旧子串和 $T$ 的新子串的 LCS</li>
+<li>$T$ 的旧子串和 $S$ 的新子串的 LCS</li>
+</ul>
+<p>两个旧子串的长度可以不相等，由此能填充整个数组，复杂度 $O(mn)$。</p>
+<p>另一种推公式的方法是从后往前推，先判两个完整字符串，再不断地去掉后缀。</p>
+<p>从表的右下角向左上角回溯，每一个使转移方向斜着（加一）的项就是 LCS 里的一项，所以记录一下转移方向就能得到子序列本列。</p>
+<p>这个东西可以用来查重。</p>
+<h2 id="递推与-DP"><a href="#递推与-DP" class="headerlink" title="递推与 DP"></a>递推与 DP</h2><p>DP 基本就是递推。</p>
+<h3 id="完全背包-01"><a href="#完全背包-01" class="headerlink" title="完全背包 01"></a>完全背包 01</h3><blockquote>
+<p>$n$ 种给定重量和价值的物品，从中选择总重不超过 $W$ 的物品，使选出的物品总价值最大。每种物品可选任意多件。</p>
+</blockquote>
+<p>首先确定 DP 数组的定义：</p>
+<script type="math/tex; mode=display">
+dp[i + 1][j]:=从前i种物品中选择总重量j以内时的最大总价.</script><p>则有递推关系：</p>
+<ul>
+<li>前零种和总重零显然是 $0$</li>
+<li>设第 $i$ 种选了 $k$ 个<ul>
+<li>第 $i$ 种不可选时，$k=0$</li>
+<li>第 $i$ 种可选时，从前 $i - 1$ 种扣除 $k \times w[i]$ 的重量，用于选择第 $i$ 种</li>
+</ul>
+</li>
+</ul>
+<p>则前 $i$ 种的最优方案是 $k$ 从 $0$ 一直到装不下为止，所有状态中的最大总价。那么可以写出一个三重循环。</p>
+<p>这个算法的最坏情况是，遇到重量为 $1$ 的物品时，$k$ 从 $0$ 一直增长到最多 $W$，加上外面两层循环，复杂度 $O(nW^2)$，不算好。</p>
+<p>用解决第一个背包问题的思路，来看一下有没有重复的计算。画一下 DP 数组可以发现，在 $dp[i + 1][j]$ 选 $k \geq 1$ 时描述的状态，和在 $dp[i + 1][j - w[i]]$ 选 $k - 1$ 描述的状态是一样的，再向前推也成立。前一个状态已经达到了最优，那么只需要把它拿过来加上一个 $w[i]$ 就行了（无后效性），毕竟只有这么一个转移的方向，$k$ 从 $0$ 开始的增长就可以简化到 $k = 0$ 或 $k \geq 1$，这和01背包是一个意思。</p>
+<p>也可以看书上的数学证明：</p>
+<script type="math/tex; mode=display">\begin{aligned}
+  &dp[i + 1][j]\\\\[2ex]
+  =&\max\{dp[i][j - k \times w[i]] + k \times v[i] | k \geq 0\}\\\\[2ex]
+  =&\max(dp[i][j],\quad \max\{dp[i][j - k \times w[i]] + k \times v[i] | k \geq 1\})\\\\[2ex]
+  =&\max(dp[i][j],\quad max\{dp[i][j - w[i] - k \times w[i]] + k \times v[i] + v[i] | k \geq 0\})\\\\[2ex]
+  =&\max(dp[i][j],\quad max\{dp[i][j - w[i] - k \times w[i]] + k \times v[i] | k \geq 0\}\quad + v[i])\\\\[2ex]
+  =&\max(dp[i][j],\quad dp[i + 1][j - w[i]] + v[i])
+\end{aligned}</script><p>这就是01背包了。如此可以舍去关于 $k$ 的循环，复杂度为 $O(nW)$。可以尝试用一维数组去解。</p>
+<p>像01背包一样，也可以只用一维数组来做。注意此处每次转移依赖“这一行”的前项，要更改循环顺序。</p>
+<h3 id="完全背包-02"><a href="#完全背包-02" class="headerlink" title="完全背包 02"></a>完全背包 02</h3><p>和同学讨论到的另一种经典的完全背包问题：</p>
+<blockquote>
+<p>使用若干种给定面额的硬币搭配出指定总面额。每种面额的硬币不限枚数，求全部方案数。</p>
+</blockquote>
+<p>定义 $dp[i + 1][j]:=使用前i种硬币搭配出总额j的方案数(可取0枚)$，则当允许取当前种的硬币时，总方案数等于“取它”和“不取它”的和，即 $dp[i + 1][j] = dp[i + 1][j - w[i]] + dp[i][j]$。每次更新要用到当前行的前项。</p>
+<h3 id="多重部分和"><a href="#多重部分和" class="headerlink" title="多重部分和"></a>多重部分和</h3><blockquote>
+<p>给定 $n$ 种不同大小的正整数，数字 $a_i$ 有 $m_i$ 个。判断是否存在一种选数方案，使选出的数字和恰为 $K$。</p>
+</blockquote>
+<p>DP 数组的定义会影响复杂度。</p>
+<p>有这样三种定义：</p>
+<ol>
+<li>$dp[i + 1][j]:=前i种数字能否加成j$</li>
+<li>$dp[i + 1][j]:=前i种数字加成j的方案数$</li>
+<li>$dp[i + 1][j]:=前i种数字加成j时，第i种剩余的个数$</li>
+</ol>
+<h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><p>要使前 $i$ 种能加成 $j$，则前 $i - 1$ 种要能加成 $j, j - a_i, \cdots j - m_i a_i$ 之一。开循环会有三层，复杂度 $O(K\sum_i m_i)$ ，容易炸。没有看到 $n$ 是因为它在求和里面。</p>
+<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><p>和上文选硬币的方法一样。显然 $j &lt; a[i]$ 时是不能选当前的。注意上界是 $\min(K,至今为止所有可选硬币的价值和)$，为了节省时间可以在读入的时候维护一个前缀和。最高复杂度 $O(nK)$。</p>
+<h4 id="3"><a href="#3" class="headerlink" title="3"></a>3</h4><p>注意不能加成 $j$ 的位置要用 $-1$ 填充。则 $dp[i][j]\geq 0$ 时，$dp[i + 1][j] = m_i$；$dp[i + 1][j - a_i] = k$ 时，$dp[i + 1][j] = k - 1$；$dp[i + 1][j - a_i] \leq 0$ 或 $a_i$ 选不上时，$dp[i + 1][j] = -1$。复杂度 $O(nK)$。</p>
+<h3 id="最长上升子序列-LIS"><a href="#最长上升子序列-LIS" class="headerlink" title="最长上升子序列 LIS"></a>最长上升子序列 LIS</h3><blockquote>
+<p>长度为 $n$ 的数列 $a<em>0, a_1, \cdots a</em>{n - 1}$，求它最长上升子序列的长度。</p>
+</blockquote>
+<p>经典字符串题目。</p>
+<p>定义 $dp[i]:=以a_i结尾的最长上升子序列的长度$，每次扫描到一个新字符，将它和之前的各字符比较，在比它小的字符里选出数组值最大的，加一作为新字符位置的值。没有更小的字符时，取零加一。同时维护整个数组至今的最大值即可。复杂度 $O(n^2)$。</p>
+<p>或者定义 $dp[i]:=长度为i+1的上升子序列中最小的末尾元素$，这样定义的原因是相同长度的子序列，末尾越小，后续更有可能遇到更大字符。如果不存在一个长度的子序列，用充分大填充。显然这个数组除了充分大之外是递增的，可以用二分优化到 $O(n\log n)$。</p>
+<h2 id="计数问题的-DP"><a href="#计数问题的-DP" class="headerlink" title="计数问题的 DP"></a>计数问题的 DP</h2><h3 id="划分数"><a href="#划分数" class="headerlink" title="划分数"></a>划分数</h3><blockquote>
+<p>有 $n$ 个无区别的物品，将它们划分成不超过 $m$ 组，求出划分方法数。结果对 $M$ 取余。</p>
+</blockquote>
+<p>比如 $4$ 个物品分成 $3$ 组以内，叫 $4的3划分$。注意每组是不分先后的，即 $1+1+2$ 和 $1+2+1$ 是同一种划分。DP 在解计数问题和期望问题时也经常用。</p>
+<p>定义 $dp[i][j]:=j的i划分的总数$，则容易想到如果每组不同，则 $j$ 的 $i$ 划分就是先取出 $k$ 个，再计剩下 $j - k$ 的 $i - 1$ 划分，$k$ 从 $0$ 到 $j$。</p>
+<p>每组相同时，要考虑重复计算，也不能单纯地把 $k$ 取 $0$ 到一半。考虑新的递推关系：当一个 $n$ 的 $m$ 划分 ${a_i}(\sum_1^m a_i = n)$ 成立时，考察它的每一项。如果各项为正，则它对应一个 $n - m$ 的 $m$ 划分；如果有为零的项，则它<em>至少</em>对应一个 $n$ 的 $m - 1$ 划分。此处“至少”是指推到上一个状态即可。则有以下递推关系：$dp[i][j] = dp[i - 1][j] + dp[i][j - i]$。处理一下边界，可以在 $O(nm)$ 里得到答案。</p>
+<h3 id="多重集组合数"><a href="#多重集组合数" class="headerlink" title="多重集组合数"></a>多重集组合数</h3><blockquote>
+<p>有 $n$ 种物品，第 $i$ 种有 $a_i$ 个，不同种之间物品不同，同种之间无法区分。从这些物品中取出 $m$ 个，求取法总数对 $M$ 取余的结果。</p>
+</blockquote>
+<p>比较方便地定义 $dp[i][j]:=从前i种物品中取j个的方案总数(模M)$。则 $dp[i][j]$ 是 $dp[i - 1][j - k]$，$k$ 从 $0$ 到 $\min(j, a_{i - 1})$。直接计算的复杂度是三次，<strong>再往回推一项之后合并</strong>，如下优化到二次：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+  & dp[i + 1][j]\\\\[2ex]
+  = &\sum_{k = 0}^{\min(j, a_i)}dp[i][j - k]\\\\[2ex]
+  \stackrel{展开，增减项，分类讨论}{=} & dp[i][j] - dp[i][j - 1 - a_i] + \sum_{k = 0}^{\min(j - 1, a_i)}dp[i][j - 1 - k]\\\\[2ex]
+  = & dp[i][j] + dp[i + 1][j - 1] - dp[i][j - 1 - a_i]
+\end{aligned}</script><p>注意分类讨论时的越界问题。优化的目的是化成递推。</p>
+<p>这篇我好像拖了将近一个月？一做志愿者就废了……</p>
+<p>下面讲数据结构。正好这学期也开这门课。</p>
+<p>还想着看完这本书之后买块键盘呢……</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/09/04/tzcxsjjs-02-01/" title="挑战程序设计竞赛 02 章 01">https://f-jason.site/blog/2020/09/04/tzcxsjjs-02-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/blog/tags/%E3%80%8A%E6%8C%91%E6%88%98%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AB%9E%E8%B5%9B%E3%80%8B/" rel="tag"># 《挑战程序设计竞赛》</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/08/10/tzcxsjjs-01/" rel="prev" title="挑战程序设计竞赛 01 章">
+      <i class="fa fa-chevron-left"></i> 挑战程序设计竞赛 01 章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/22/wlbmyjjc-00/" rel="next" title="网络编码研究基础 00 概览">
+      网络编码研究基础 00 概览 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

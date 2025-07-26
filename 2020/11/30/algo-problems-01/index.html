@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="这是我的第一篇题解。以后每攒 5 道题会发一篇。除了需要特别注意的部分，尽量避免直接放代码。 坚持下去。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="题解 01">
+<meta property="og:url" content="https://f-jason.site/blog/2020/11/30/algo-problems-01/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="这是我的第一篇题解。以后每攒 5 道题会发一篇。除了需要特别注意的部分，尽量避免直接放代码。 坚持下去。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-30T12:02:11.000Z">
+<meta property="article:modified_time" content="2020-11-30T12:02:11.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/11/30/algo-problems-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>题解 01 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1444-A-Division"><span class="nav-text">CF 1444 A Division</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1451-C-String-Equality"><span class="nav-text">CF 1451 C String Equality</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-859-C-Pie-Rules"><span class="nav-text">CF 859 C Pie Rules</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CCPC-2020-%E7%A7%A6%E7%9A%87%E5%B2%9B%E7%AB%99-G-Good-Number"><span class="nav-text">CCPC 2020 秦皇岛站 G Good Number</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#POJ-3279-FlipTile"><span class="nav-text">POJ 3279 FlipTile</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/11/30/algo-problems-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          题解 01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-30 20:02:11" itemprop="dateCreated datePublished" datetime="2020-11-30T20:02:11+08:00">2020-11-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Cases/" itemprop="url" rel="index"><span itemprop="name">Cases</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这是我的第一篇题解。以后每攒 5 道题会发一篇。除了需要特别注意的部分，尽量避免直接放代码。</p>
+<p>坚持下去。</p>
+<span id="more"></span>
+<h1 id="CF-1444-A-Division"><a href="#CF-1444-A-Division" class="headerlink" title="CF 1444 A Division"></a>CF 1444 A <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1444/problem/A">Division</a></h1><blockquote>
+<p>给定一对数 $p$ 和 $q$，求尽可能大的 $x$，使 $x$ 可整除 $p$，而 $q$ 不能整除 $x$。<br>$1 \leq p \leq 10^{18}, 2 \leq q \leq 10^{9}$</p>
+</blockquote>
+<p>首先，如果 $q$ 不能整除 $p$，那么答案就是 $p$ 自己。其次，$x$ 一定是 $p$ 去掉若干质因数得到的。</p>
+<p>去掉了几种质因数呢？明确一个概念：整除关系代表除数拥有被除数所有种类的质因数，且次数都不大于被除数。那么不可整除就代表除数至少一个质因数是被除数没有的，或者次数大于除数。这里既然只能扣除，那么扣除多种得到不可除的情况，一定能转化成只扣除一种，而转化后得到的答案 $x$ 显然较大。所以我们可以对每一种质因数分别去掉若干个，得到的结果再取最大。</p>
+<p>大框架是对 $q$ 的分解质因数，1e9 的数据分解下来还是很小的。对每个质因数，从 $p$ 里扣掉它直到结果满足题设（可能一个都不扣，当 $p$ 没有这个数时，即开头提到的情况），再和上一个结果取最大。这些可以压到分解质因数的循环里去做。</p>
+<h1 id="CF-1451-C-String-Equality"><a href="#CF-1451-C-String-Equality" class="headerlink" title="CF 1451 C String Equality"></a>CF 1451 C <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1451/problem/C">String Equality</a></h1><blockquote>
+<p>给定两个长度为 $n$ 的小写字符串 $a$ 和 $b$，以及一个整数 $k \leq n$。对 $a$ 有以下两种操作：</p>
+<ul>
+<li>交换相邻的两个字符</li>
+<li>选定长为 $k$ 的一个区间，当区间内各字符相等时，将它们都变成字典序下一个字母。对 z <strong>不能</strong>如此操作。</li>
+</ul>
+<p>对给定的输入，输出是否能通过以上两种操作使两个字符串相等。<br>$2 \leq n \leq 10^6, 1 \leq k \leq n$</p>
+</blockquote>
+<p>第一个操作代表我们可以把 $a$ 的字符任意组合。原来散开的相等字符都可以排在一起，然后进行变化。从 a 到 z 的变化是不可逆的，那么从 a 开始，对每个 $a$ 和 $b$ 都有的字符，留下和 $b$ 中同样多的，剩下的全部转化到字典序下一个字符。如果这样的操作一直到 z 都可行，则是可以让两个字符串相等的，否则不可以。</p>
+<p>转化的条件是先保留和 $b$ 同样多的字符，且每次只能以 $k$ 个为一组，统一转化。</p>
+<h1 id="CF-859-C-Pie-Rules"><a href="#CF-859-C-Pie-Rules" class="headerlink" title="CF 859 C Pie Rules"></a>CF 859 C <a target="_blank" rel="noopener" href="https://codeforces.com/contest/859/problem/c">Pie Rules</a></h1><blockquote>
+<p>甲和乙玩取数（拿派）游戏，规则如下：<br>有一个决定权，初始在乙手上。数列是固定顺序的，对于每个数，拥有决定权的人可以把这个数给一个玩家，同时把决定权给另一个玩家。双方都想让自己拿到的数总值最大。<br>假设双方都按最优方案，求最终分别拿到的数值总和。</p>
+</blockquote>
+<p><del>一直要把决定权留给自己的话好吃的派就都是别人的了</del></p>
+<p>一道 dp 题。</p>
+<p>既然每个人都会按最优方案选（只要决定权在自己手上），那么只从状态来考虑，在每个位置能行使决定权的人是<strong>状态转移的推力</strong>。于是考虑用 <code>dp[i]</code> 记录在第 $i$ 个位置拿到决定权的人能获得的最大总值。再看方向，由于在每个位置拿到决定权后，后续取数存在一个确定的最优，那么从后往前 d 是较好的想法。于是 <code>dp[i]</code> 记录在第 $i$ 个位置拿到决定权的人，之后能获得的最大总值。</p>
+<p>那么初始状态是 <code>dp[n] = n</code>，目标状态是 <code>dp[1]</code> （根据题设，这是乙的）。接下来考虑状态转移方程。</p>
+<p>对每个拿到决定权的人，他之后能拿到的最大值与是否交出决定权相关。若不交出，他能拿到的值和下一个位置相等；交出，则能拿到的值是 <code>当前位置 + 下一个位置开始的后缀和 - 下一个位置</code>，即 <code>当前位置开始的后缀和 - 下一个位置</code>。两者取最大即可。</p>
+<p>实际上 <code>dp[i]</code> 记录的是在第 $i$ 位置拿到决定权的人之后能获得的最大。</p>
+<h1 id="CCPC-2020-秦皇岛站-G-Good-Number"><a href="#CCPC-2020-秦皇岛站-G-Good-Number" class="headerlink" title="CCPC 2020 秦皇岛站 G Good Number"></a>CCPC 2020 秦皇岛站 G <a target="_blank" rel="noopener" href="https://codeforces.com/gym/102769/problem/G">Good Number</a></h1><blockquote>
+<p>给定 $n$ 和 $k$，有 $i \in [1, n]$ 且 $\lfloor \sqrt[k]{i}\rfloor | i$，求 $i$ 的个数。<br>$1\leq n, k \leq 10^9$</p>
+</blockquote>
+<p>由于是向下取整，考虑按 $[i^k, (i + 1)^k)$ 将 $[1, n]$ 分段，段内开次方向下取整都会得到 $i$，那么段内所有可以被 $i$ 整除的数就是 Good Number。最后一段显然有可能不全。敲一下快速幂就好了。注意考虑超过 <code>long long</code> 的情况。</p>
+<h1 id="POJ-3279-FlipTile"><a href="#POJ-3279-FlipTile" class="headerlink" title="POJ 3279 FlipTile"></a>POJ 3279 <a target="_blank" rel="noopener" href="http://poj.org/problem?id=3279">FlipTile</a></h1><blockquote>
+<p>$M \times N$ 的黑白棋棋盘，每次翻一个棋子时，与它四连通的棋子也会翻转。给定棋盘尺寸和棋子状态，以棋盘的形式输出全部翻转为白色的方案，每个位置的数代表该位置的翻转次数，要求翻转次数最小且字典序最小。不能完成时输出 “IMPOSSIBLE”。<br>$1 \leq M, N \leq 15$</p>
+</blockquote>
+<p>搜索题。显然一个位置翻转奇数次等价于翻转一次，偶数次等价于不翻转。按行来考虑，每行的一个位置要被翻转当且仅当它上一行对应位置是黑色，然后枚举第一行的翻转状态即可。注意搜到了一个方案不能停，要比较总翻转次数和字典序，保留当前最符合题设的答案。</p>
+<p>当时被这道题卡了挺久，主要在记录当前最优和第一个枚举状态这些小地方，一度想要放弃 kuangbin 的题集（一遇到 POJ 的题就难受，各种 WA）。所幸撑住了。继续。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/11/30/algo-problems-01/" title="题解 01">https://f-jason.site/blog/2020/11/30/algo-problems-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/23/tzcxsjjs-02-02/" rel="prev" title="挑战程序设计竞赛 02 章 02">
+      <i class="fa fa-chevron-left"></i> 挑战程序设计竞赛 02 章 02
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/12/13/papers-on-codes-and-distributed-computing/" rel="next" title="有关编码和分布式计算的几篇论文">
+      有关编码和分布式计算的几篇论文 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="一个基于路径追踪的离线软渲染器，参考 Ray Tracing in One Weekend。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单光追渲染器 SlowPT">
+<meta property="og:url" content="https://f-jason.site/blog/2022/02/26/slowpt/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="一个基于路径追踪的离线软渲染器，参考 Ray Tracing in One Weekend。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://f-jason.site/blog/2022/02/26/slowpt/image.jpg">
+<meta property="article:published_time" content="2022-02-26T08:18:28.000Z">
+<meta property="article:modified_time" content="2022-02-26T08:18:28.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Computer Graphics">
+<meta property="article:tag" content="Project">
+<meta property="article:tag" content="SlowPT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://f-jason.site/blog/2022/02/26/slowpt/image.jpg">
+
+<link rel="canonical" href="https://f-jason.site/blog/2022/02/26/slowpt/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>简单光追渲染器 SlowPT | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="nav-text">1 概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%9B%BE%E7%89%87"><span class="nav-text">2 图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%90%91%E9%87%8F%E5%92%8C%E9%A2%9C%E8%89%B2"><span class="nav-text">3 向量和颜色</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%85%89%E7%BA%BF%E3%80%81%E7%AE%80%E5%8D%95%E7%9B%B8%E6%9C%BA%E3%80%81%E8%83%8C%E6%99%AF"><span class="nav-text">4 光线、简单相机、背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E5%85%89%E7%BA%BF"><span class="nav-text">4.1 光线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E7%9B%B8%E6%9C%BA%E5%92%8C%E8%A7%86%E5%8F%A3"><span class="nav-text">4.2 相机和视口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-%E6%B8%B2%E6%9F%93%E4%B8%80%E4%B8%AA%E8%83%8C%E6%99%AF"><span class="nav-text">4.3 渲染一个背景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%B8%B2%E6%9F%93%E4%B8%80%E4%B8%AA%E7%90%83%EF%BC%88%E5%9C%86%EF%BC%89"><span class="nav-text">5 渲染一个球（圆）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-%E7%90%83%E9%9D%A2%E6%B3%95%E7%BA%BF%E5%92%8C%E5%A4%9A%E4%B8%AA%E7%89%A9%E4%BD%93"><span class="nav-text">6 球面法线和多个物体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E7%90%83%E9%9D%A2%E6%B3%95%E7%BA%BF"><span class="nav-text">6.1 球面法线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E5%85%AC%E5%BC%8F%E7%AE%80%E5%8C%96"><span class="nav-text">6.2 公式简化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E5%A4%9A%E4%B8%AA%E7%89%A9%E4%BD%93%E5%92%8C%E5%A4%9A%E7%A7%8D%E7%89%A9%E4%BD%93%EF%BC%8C%E6%8A%BD%E8%B1%A1%E8%A1%A8%E7%A4%BA"><span class="nav-text">6.3 多个物体和多种物体，抽象表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E5%89%8D%E5%90%91%E9%9D%A2%E5%92%8C%E5%90%8E%E5%90%91%E9%9D%A2"><span class="nav-text">6.4 前向面和后向面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-5-%E7%89%A9%E4%BD%93%E5%88%97%E8%A1%A8"><span class="nav-text">6.5 物体列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-6-%E5%B8%B8%E9%87%8F%E5%92%8C%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0"><span class="nav-text">6.6 常量和工具函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-%E6%8A%97%E9%94%AF%E9%BD%BF"><span class="nav-text">7 抗锯齿</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-%E6%9D%90%E8%B4%A8"><span class="nav-text">8 材质</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-%E7%AE%80%E5%8D%95%E6%BC%AB%E5%8F%8D%E5%B0%84"><span class="nav-text">8.1 简单漫反射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-0-%E4%BC%BD%E9%A9%AC%E6%A0%A1%E6%AD%A3"><span class="nav-text">8.1.0 伽马校正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-1-%E4%BD%BF%E7%94%A8%E7%90%83%E4%BD%93%E9%9A%8F%E6%9C%BA%E5%AE%9E%E7%8E%B0-Lambertian"><span class="nav-text">8.1.1 使用球体随机实现 Lambertian</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-2-%E6%9A%97%E8%89%B2%E7%9A%84%E7%B2%89%E5%88%BA"><span class="nav-text">8.1.2 暗色的粉刺</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-3-%E7%9C%9F%E6%AD%A3%E7%9A%84-Lambertian-%E5%8F%8D%E5%B0%84"><span class="nav-text">8.1.3 真正的 Lambertian 反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-4-%E4%BD%BF%E7%94%A8%E5%8D%8A%E7%90%83%E9%9A%8F%E6%9C%BA%E5%AE%9E%E7%8E%B0-Lambertian"><span class="nav-text">8.1.4 使用半球随机实现 Lambertian</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-%E9%87%91%E5%B1%9E%E6%9D%90%E8%B4%A8"><span class="nav-text">8.2 金属材质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-1-%E6%9D%90%E8%B4%A8%E7%9A%84%E6%8A%BD%E8%B1%A1"><span class="nav-text">8.2.1 材质的抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-2-%E6%8A%BD%E8%B1%A1%E5%90%8E%E7%9A%84-Lambertian-%E6%9D%90%E8%B4%A8"><span class="nav-text">8.2.2 抽象后的 Lambertian 材质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-3-%E9%87%91%E5%B1%9E%E6%9D%90%E8%B4%A8"><span class="nav-text">8.2.3 金属材质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-4-%E9%87%91%E5%B1%9E%E7%A3%A8%E7%A0%82%E9%9D%A2"><span class="nav-text">8.2.4 金属磨砂面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-%E7%94%B5%E4%BB%8B%E8%B4%A8%E6%9D%90%E8%B4%A8"><span class="nav-text">8.3 电介质材质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-1-%E6%8A%98%E5%B0%84"><span class="nav-text">8.3.1 折射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-2-%E6%96%BD%E5%88%A9%E5%85%8B%E8%BF%91%E4%BC%BC"><span class="nav-text">8.3.2 施利克近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-3-%E7%A9%BA%E5%BF%83%E7%8E%BB%E7%92%83%E7%90%83%EF%BC%88%E6%8A%80%E5%B7%A7%EF%BC%89"><span class="nav-text">8.3.3 空心玻璃球（技巧）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-%E5%8F%AF%E7%A7%BB%E5%8A%A8%E7%9A%84%E7%9B%B8%E6%9C%BA"><span class="nav-text">9 可移动的相机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E8%A7%86%E5%9C%BA"><span class="nav-text">9.1 视场</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E5%8F%AF%E6%94%B9%E5%8F%98%E4%BD%8D%E7%BD%AE%E5%92%8C%E6%9C%9D%E5%90%91%E7%9A%84%E7%9B%B8%E6%9C%BA"><span class="nav-text">9.2 可改变位置和朝向的相机</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-%E7%84%A6%E6%95%A3%E6%A8%A1%E7%B3%8A"><span class="nav-text">10 焦散模糊</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-1-%E8%96%84%E9%80%8F%E9%95%9C%E8%BF%91%E4%BC%BC"><span class="nav-text">10.1 薄透镜近似</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11-%E6%80%BB%E7%BB%93"><span class="nav-text">11 总结</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2022/02/26/slowpt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          简单光追渲染器 SlowPT
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-26 16:18:28" itemprop="dateCreated datePublished" datetime="2022-02-26T16:18:28+08:00">2022-02-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Record/" itemprop="url" rel="index"><span itemprop="name">Record</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/blog/2022/02/26/slowpt/image.jpg" alt="image"></p>
+<p>一个基于路径追踪的离线软渲染器，参考 <a target="_blank" rel="noopener" href="https://raytracing.github.io/books/RayTracingInOneWeekend.html">Ray Tracing in One Weekend</a>。</p>
+<span id="more"></span>
+<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1 概述"></a>1 概述</h1><p>本来想一个周末写完的，结果拖成了两周末加一下午。其实按有效工作时间也就一周末的事情，奈何无法集中精力。</p>
+<p>基于路径追踪实现的光线追踪软渲染，单线程 CPU 处理硬编码的多材质几何球体（可以很方便做出其他几何形状，懒得写了）。</p>
+<p>通过 cmake 管理各个源码文件。</p>
+<p>本文只是看书实现时的手记，并没有全面反映 Ray Tracing in One Weekend 的内容，章节也没有对应区分，需要配合原书阅读。</p>
+<h1 id="2-图片"><a href="#2-图片" class="headerlink" title="2 图片"></a>2 图片</h1><p>把渲染出的图片用 ASCII 字符写成 PPM 格式存放。注意<a target="_blank" rel="noopener" href="https://github.com/RayTracing/raytracing.github.io/issues/636">字符编码的问题</a>，Windows 10 可以用 PowerShell 命令来解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./slowpt.exe | Out-File ../image.ppm -Encoding ascii</span><br></pre></td></tr></table></figure>
+<h1 id="3-向量和颜色"><a href="#3-向量和颜色" class="headerlink" title="3 向量和颜色"></a>3 向量和颜色</h1><p>整个项目用得最频繁的数据结构是三维向量。描述物体、相机和光线需要向量，描述 RGB 颜色也需要用到。因为不涉及几何变换，没有用四维的机会。</p>
+<h1 id="4-光线、简单相机、背景"><a href="#4-光线、简单相机、背景" class="headerlink" title="4 光线、简单相机、背景"></a>4 光线、简单相机、背景</h1><h2 id="4-1-光线"><a href="#4-1-光线" class="headerlink" title="4.1 光线"></a>4.1 光线</h2><p>光线涉及的数据就是一个起点和一个方向，可以使用参数方程表示：$\mathrm{P}(t) = \mathrm{A} + t\mathrm{b}$。</p>
+<p>关键是要获得光线在某个时间点的位置，主要用于求光线与表面的交点，实现为 <code>ray::at(t)</code>。</p>
+<h2 id="4-2-相机和视口"><a href="#4-2-相机和视口" class="headerlink" title="4.2 相机和视口"></a>4.2 相机和视口</h2><p>采用与 OpenGL 类似的右手系和相机位置，视平面高 $2$ 单位，宽高比 $16:9$，距离相机 $1$ 个单位（这些单位长度后面都会做成可修改的）。</p>
+<p>确定像素颜色的方式是：从视口的左上角开始，按行优先遍历所有像素。实现上，以像素为单位，使用视平面内某个点（代码里是左下角）和全长、全宽两个向量来表示整个视口，配合遍历的像素下标就可以按比例算出光线与视平面相交的位置，减去源点，就可以得到一条光线的方向。</p>
+<h2 id="4-3-渲染一个背景"><a href="#4-3-渲染一个背景" class="headerlink" title="4.3 渲染一个背景"></a>4.3 渲染一个背景</h2><p>我们可以硬编码一个天空背景作为光线不和几何体相交后的颜色，颜色渐变可以根据光线的空间位置使用线性插值实现。</p>
+<h1 id="5-渲染一个球（圆）"><a href="#5-渲染一个球（圆）" class="headerlink" title="5 渲染一个球（圆）"></a>5 渲染一个球（圆）</h1><p>向量形式的隐式球方程，代入光线的参数方程就可以求出光线与球的交点。这里只需要知道是否相交，即一元二次方程是否有解。代码使用一套继承对象来定义一个球。</p>
+<p>到此的着色方式：相交则返回红色，否则是背景色。注意此处允许光线的参数 $t$ 为负，后续会做改进。</p>
+<h1 id="6-球面法线和多个物体"><a href="#6-球面法线和多个物体" class="headerlink" title="6 球面法线和多个物体"></a>6 球面法线和多个物体</h1><p>球是最简单的几何体。我说的。</p>
+<h2 id="6-1-球面法线"><a href="#6-1-球面法线" class="headerlink" title="6.1 球面法线"></a>6.1 球面法线</h2><p>法向量的设计：单位长度，取值在 $[-1, 1]^3$，映射到 $[0, 255]^3$ 显示在渲染结果里作为验证。</p>
+<p>法向量与物体表面的特定点相关，所以此处需要求光线与物体的交点，而非仅仅“相交性”。</p>
+<h2 id="6-2-公式简化"><a href="#6-2-公式简化" class="headerlink" title="6.2 公式简化"></a>6.2 公式简化</h2><p>球与直线（光线）相交的二次方程，约分，能消一点是一点。</p>
+<h2 id="6-3-多个物体和多种物体，抽象表示"><a href="#6-3-多个物体和多种物体，抽象表示" class="headerlink" title="6.3 多个物体和多种物体，抽象表示"></a>6.3 多个物体和多种物体，抽象表示</h2><p>使用一个记录结构 <code>hit_record</code> 来保存光线和每个物体的碰撞信息（相交点、点法线、相交时间）。</p>
+<p>原先的函数 <code>double ObjectBase::hit_object(ray)</code> 改为 <code>bool ObjectBase::hit(ray, double, double, hit_record&amp;)</code>，接记录结构的一个引用，返回在时间区间内光线与物体是否发生碰撞。</p>
+<h2 id="6-4-前向面和后向面"><a href="#6-4-前向面和后向面" class="headerlink" title="6.4 前向面和后向面"></a>6.4 前向面和后向面</h2><p>（用于着色的）法向量不一定总是指向物体外部，它的方向往往取决于光线方向。那么就会遇到一个选择，即法向量与光线的方向：</p>
+<ul>
+<li>如果法向量总取外向，那么需要一次点积才能判断光线照射的是物体内表面还是外表面</li>
+<li>如果法向量总与光线反向，那就无法根据光线和法线方向区分物体的内外表面，需要把光线来向记录下来</li>
+</ul>
+<p>本质上，这是个在几何阶段（总是反向）还是在着色阶段（总是向外）计算法线指向的问题。如果材质比较少，那就可以在着色的时候计算出用来着色的法向；如果几何形状更少，那就在几何阶段算出来，信息留到着色的时候用。</p>
+<h2 id="6-5-物体列表"><a href="#6-5-物体列表" class="headerlink" title="6.5 物体列表"></a>6.5 物体列表</h2><p>另外封装一个列表对象，方便内存管理，未来有存储结构或者函数变动也比较容易改。</p>
+<p>这里使用共享智能指针的向量 <code>vector&lt;shared_ptr&lt;T&gt;&gt;</code> 来记录和管理物体，这样可以多物体共用一个材质。</p>
+<h2 id="6-6-常量和工具函数"><a href="#6-6-常量和工具函数" class="headerlink" title="6.6 常量和工具函数"></a>6.6 常量和工具函数</h2><p>圆周率、无穷大等常量，角度弧度转换等常用函数，以及经常需要的头文件，都可以丢到一个头文件里。</p>
+<h1 id="7-抗锯齿"><a href="#7-抗锯齿" class="headerlink" title="7 抗锯齿"></a>7 抗锯齿</h1><p>这边采用的是 SSAA。首先把相机抽象出来。简单相就是一个取景框和一个源点。</p>
+<p>SSAA 对一个像素做多次着色采样，像素最终的颜色就是多次采样的颜色平均。而 MSAA 对一个像素做中心一次着色，但做多次几何采样，几何覆盖的频率作为像素颜色的权重。一般来说几何采样更快一些。目前用随机采样。</p>
+<p>其实现在的光线反射/散射模型是永远一条光线，没有分裂，所以在一个像素内必须多次采样来获得比较准确的颜色。</p>
+<p>注意像素颜色的计算从 <code>r * 255.999</code> 换成了 <code>clamp(r, 0, 0.999) * 256</code> 。这里可能是出于精度考虑，添加了一个函数 <code>double clamp(double, double, double)</code> 用来把颜色强度限制在一个区间内。实际上全部在区间内的颜色取平均之后应该仍然在区间内部。</p>
+<h1 id="8-材质"><a href="#8-材质" class="headerlink" title="8 材质"></a>8 材质</h1><h2 id="8-1-简单漫反射"><a href="#8-1-简单漫反射" class="headerlink" title="8.1 简单漫反射"></a>8.1 简单漫反射</h2><p>漫反射是从非出射光线的方向也能看到部分入射光的现象，其物理基础是物体表面的微小面片有不同的朝向。</p>
+<p>此处相关的数学知识是兰伯特余弦定理：单位面积的“光强” $L$ 与此处的光线入射方向和法向夹角的余弦成正比，即 $L<em>{diffuse} = k\cos\theta$，如果把光线入射方向用从此处指向光源的一个单位向量 $\vec I$ 表示，可以变形为 $L</em>{diffuse} = k\max(0, \vec n \cdot \vec I)$，取较大值是为了排除光线从后向面入射的情况。</p>
+<p>代码上，往往使用随机的反射方向来实现，但问题是<em>随机变量的分布</em>可能并非物理正确的，甚至没有在数学上与我们的想法一致。</p>
+<h3 id="8-1-0-伽马校正"><a href="#8-1-0-伽马校正" class="headerlink" title="8.1.0 伽马校正"></a>8.1.0 伽马校正</h3><p>gamma 是一个比较巧合的事情。</p>
+<p>早期的 CRT 显像设备，由于元件的电器特性，其接收电压和表现出的亮度大约是二次关系，因此渲染出的颜色需要做一个开方才能正常显示。</p>
+<p>现在的显示设备基本没有这个特性，但仍然拥有内置的 gamma。保留 gamma 的原因不是硬件问题，而是人眼对亮度的感知特性。人眼对亮度的相对变化更敏感，例如 0.2 的亮度增加了 0.1 和 0.8 的亮度增加 0.1，前者会让人觉得“变化更大”。这个感知特性大约是一个 2 为底的对数函数。</p>
+<p>基于这个特性，我们可以使用非线性编码来记录颜色，给高亮度分配更少的码值，低亮度分配更多的码值，在使低亮度表现更细腻的同时不影响高亮度的视觉效果。这样的编码当然最好取人眼感知曲线的反函数，这就是现在硬件内置的 gamma。</p>
+<p>因此，我们交给显示器的亮度表现出来会更暗一些。为了达到和观感比较统一的效果，我们在进行从 $[0, 1]$ 到 $[0, 255]$ 的区间转换之前，先把数值开个 $\gamma$ 次根。这里 $\gamma$ 取 2。</p>
+<h3 id="8-1-1-使用球体随机实现-Lambertian"><a href="#8-1-1-使用球体随机实现-Lambertian" class="headerlink" title="8.1.1 使用球体随机实现 Lambertian"></a>8.1.1 使用球体随机实现 Lambertian</h3><p>我们用以下模型来描述朗博特散射：</p>
+<p>两个单位球，球心分别为 $\vec P + \vec N$ 和 $\vec P - \vec N$，我们设前者在接触表面的外侧。从两个球面中选择和入射光线同侧的，在球面内随机选择一个点 $\vec S$，以 $\vec S -\vec P$ 作为反射光的方向。</p>
+<p>实现细节：</p>
+<ul>
+<li><p>首先需要实现在三维球空间内随机一个点的算法。和球相关的随机化一般都很麻烦，这边暂时采用在单位立方体内不断随机，直到结果属于单位球的方法。</p>
+</li>
+<li><p>随后只需要在求光线颜色时限制一下递归层数即可。可以发现运行时间显著增加。</p>
+</li>
+</ul>
+<p>问题：</p>
+<p>很黑，原因是光线参数在 $t = 0$ 时，如果继续弹射，会让后面反射的光线困在这个点（第一次记录的反射点就是和物体相交的点，后续的所有反射点都是交点，不会变化），在弹射次数到达限制后返回一个黑色。在求相交时间时加一个小量的下界限制即可解决。</p>
+<p>（微表面模型是另一种建模方式，它把所有材质表面都视作多个<em>镜面反射</em>的小面片。）</p>
+<p>另外注意，在没有添加环境光源的情况下，我们看到的渲染图应该是一片黑。此处的颜色实际上是灰度的。</p>
+<h3 id="8-1-2-暗色的粉刺"><a href="#8-1-2-暗色的粉刺" class="headerlink" title="8.1.2 暗色的粉刺"></a>8.1.2 暗色的粉刺</h3><p>这是之前就遇到过的问题，物体表面有一些暗色的像素，原因就是十分接近 $0$ 的光线参数。</p>
+<h3 id="8-1-3-真正的-Lambertian-反射"><a href="#8-1-3-真正的-Lambertian-反射" class="headerlink" title="8.1.3 真正的 Lambertian 反射"></a>8.1.3 真正的 Lambertian 反射</h3><p>回到我们之前提过的问题：球体相关的随机分布。</p>
+<p>我们之前取反射的时候，在光线击中点外向面的单位圆里随机了一个点，然后把反射光朝那个点射出去。在圆上拉几条弦就能看出来，随机取点落在长弦上的概率更大。这样的结果是从侧向来的光对这个点颜色的贡献更低，尽管更符合实际，但毕竟不是纯的朗博特反射。</p>
+<p>要得到更均匀的分布，可以采用在球面上随机取点，只需要把球体内随机出来的向量单位化即可。</p>
+<p>渲染结果的阴影比在球体内取点更浅一些，整体的灰度也更浅了，应该是更多光线反射到了背景上。</p>
+<h3 id="8-1-4-使用半球随机实现-Lambertian"><a href="#8-1-4-使用半球随机实现-Lambertian" class="headerlink" title="8.1.4 使用半球随机实现 Lambertian"></a>8.1.4 使用半球随机实现 Lambertian</h3><p>如果反射光线的取向在各个方向完全均匀分布，可以想象渲染结果的阴影和颜色会更浅。</p>
+<p>我们通过在一个以反射点为圆心的半单位球中随机取点来实现均匀的分布。</p>
+<h2 id="8-2-金属材质"><a href="#8-2-金属材质" class="headerlink" title="8.2 金属材质"></a>8.2 金属材质</h2><h3 id="8-2-1-材质的抽象"><a href="#8-2-1-材质的抽象" class="headerlink" title="8.2.1 材质的抽象"></a>8.2.1 材质的抽象</h3><p>如果要实现多种材质的话，比较容易管理的办法有以下几种:</p>
+<ul>
+<li>所有类型的材质独立存在，分别管理</li>
+<li>统一成一种材质，用多个参数控制</li>
+<li>抽象出材质的基本属性，继承出其他材质</li>
+</ul>
+<p>我们采用最后一种方法。</p>
+<p>材质本身只需要完成散射，即根据入射的光线和反射点信息（<code>hit_record</code>），来计算出散射的光线，以及颜色衰减，用一个纯虚函数实现。</p>
+<p>同时，<code>hit_record</code> 也需要知道自己击中了什么材质，因此拥有一个指向材质的指针。这里不能实例化一个抽象类，直接声明一个即可。</p>
+<p>这里有一个材质头文件和物体基类头文件互相包含的问题，正常写的话，在插入的时候会因为头文件展开的顺序不对发生找不到定义的情况。书上用了一个前置声明来解决，因为物体基类文件（里面的 <code>hit_record</code>）只是要用材质的一个指针名称而已。实际上比较好的方法是把 <code>hit_record</code> 单独放到一个文件里面。</p>
+<p>当光线击中物体表面时，<code>hit_record</code> 的材质指针就会指向那个物体表面的材质，然后交给求光线的函数 <code>ray_color()</code>。于是我们也要修改一下各个物体的类。</p>
+<p>此外，对于引入的材质“颜色”，是以衰减决定的，数学上就是设定一个 albedo 底色向量，乘上入射光的颜色，反射出的光线就会带上这个 albedo 的成分。</p>
+<h3 id="8-2-2-抽象后的-Lambertian-材质"><a href="#8-2-2-抽象后的-Lambertian-材质" class="headerlink" title="8.2.2 抽象后的 Lambertian 材质"></a>8.2.2 抽象后的 Lambertian 材质</h3><p>漫反射对反射光线的处理，有两种理解方式：</p>
+<ul>
+<li>总是反射，有一个常数 $R$ 的衰减</li>
+<li>不会衰减，但是不反射 $1 - R$ 的光线</li>
+</ul>
+<p>这里用总是反射 + 衰减。也可以用概率性反射 + 更小的衰减。</p>
+<p>另外要注意的是，反射/散射光的方向可能是零，因为我们可能得到和法向正好相反的随机单位向量，这需要额外判断。相比于抛弃这个情况下的方向，更好的方法是重置成法向。</p>
+<h3 id="8-2-3-金属材质"><a href="#8-2-3-金属材质" class="headerlink" title="8.2.3 金属材质"></a>8.2.3 金属材质</h3><p>金属材质和镜面材质有些类似，都是镜面反射，需要计算反射光线的方向。</p>
+<p>已知入射光线的方向向量 $\vec v$ 和入射点的法向量 $\vec N$，用几何知识可以算出出射光线的方向是 $\vec v - 2(\vec v \cdot \vec N)\vec N$。</p>
+<p>抽象出材质后，我们就可以把 <code>ray_color</code> 函数的流程写成更一般的形式：如果对应的材质有反射/散射，就返回一个衰减后的递归颜色，否则返回黑色；物体的初始化也要分为形状和材质两步。</p>
+<p>现在我们可以渲染出 diffuse 和 metal 两种材质了。</p>
+<h3 id="8-2-4-金属磨砂面"><a href="#8-2-4-金属磨砂面" class="headerlink" title="8.2.4 金属磨砂面"></a>8.2.4 金属磨砂面</h3><p>可以用一个小的球体来随机化反射光线的方向，实现金属磨砂的效果。具体代码上，添加一个 $[0.0, 1.0]$ 的模糊系数 $f$，计算出反射方向 $\vec s$ 后随机一个单位向量 $\vec u$，以 $\vec s + f\vec u$，作为反射光的真实方向，并把后向反射的光线丢弃。不丢弃的话颜色会偏亮，尤其是阴影。</p>
+<h2 id="8-3-电介质材质"><a href="#8-3-电介质材质" class="headerlink" title="8.3 电介质材质"></a>8.3 电介质材质</h2><p>透明的材质就是电介质（？），可以造成反射、透射和折射。我们不把一条入射光线分解成多条，而是随机决定入射光线反射还是折射。这边会有一个<em>能量分配的问题</em>。</p>
+<h3 id="8-3-1-折射"><a href="#8-3-1-折射" class="headerlink" title="8.3.1 折射"></a>8.3.1 折射</h3><p>和折射相关的物理规律是斯涅尔定律。Snell’s Law 认为入射角和折射角的正弦之比为常数，这个常数由折射面两侧介质的折射率之比。斯涅尔定律另外描述了折射光线的位置：与入射光线和法线共面，且与入射光线在法线不同侧。</p>
+<script type="math/tex; mode=display">
+\eta \sin \theta = \eta ' \sin \theta'</script><p>则 $\theta’ = \frac{\eta}{\eta’}\sin\theta$。</p>
+<p>如果我们有入射光方向、表面法向和折射率比值，就能求出折射光的方向。（可以尝试正交分解）</p>
+<p>代码实现在折射率上有点取巧：空气的折射率是 $1.0$，玻璃是 $1.5$，所以如果发现是从物体外部向内折射（前向面），材质折射率就直接取倒数。</p>
+<p>另外需要注意的是，斯涅尔定律导出的方程不一定有解，因为三角函数有取值限制。无法解出的光线会以全反射的形式存在。但是加上这个情况之后渲染结果没有太大区别，尽管确实有像素颜色变化。</p>
+<h3 id="8-3-2-施利克近似"><a href="#8-3-2-施利克近似" class="headerlink" title="8.3.2 施利克近似"></a>8.3.2 施利克近似</h3><p>除了光密到光疏时存在的全反射，从空气中斜着看向玻璃时也会发现类似镜面的现象。Schlick 对这个现象做了多项式级别的近似。这个情况对渲染结果有很大提升。</p>
+<h3 id="8-3-3-空心玻璃球（技巧）"><a href="#8-3-3-空心玻璃球（技巧）" class="headerlink" title="8.3.3 空心玻璃球（技巧）"></a>8.3.3 空心玻璃球（技巧）</h3><p>可以通过负的半径来做一个法向量向内的球，放在一个正常球体的内部，就能做出一个空心玻璃球。</p>
+<h1 id="9-可移动的相机"><a href="#9-可移动的相机" class="headerlink" title="9 可移动的相机"></a>9 可移动的相机</h1><p>之前的相机都是一个简单的框框，大小由结果图片的宽高比确定，根据像素确认从源点射出的光线应该射向取景框的哪里。现在我们实现一个比较符合 CG 的摄像机。</p>
+<h2 id="9-1-视场"><a href="#9-1-视场" class="headerlink" title="9.1 视场"></a>9.1 视场</h2><p>一般用角度来指定要看到的范围。把固定采样数放在更小的 fov 上，画面显示的区域就更小，但原来的小物体会“更清晰”。</p>
+<h2 id="9-2-可改变位置和朝向的相机"><a href="#9-2-可改变位置和朝向的相机" class="headerlink" title="9.2 可改变位置和朝向的相机"></a>9.2 可改变位置和朝向的相机</h2><p>相机要改变位置，那就不能依赖世界坐标系的固定点了。指定相机方位和姿态，经常用三个向量：<em>位置</em>、<em>朝向</em>和<em>上方向</em>。这样的相机会在位置处，看向 $-\vec w$，上方向为 $\vec v$。$\vec u$、$\vec w$ 和另外一个基底 $\vec u$ 组成相机空间的一组基。</p>
+<p>不过比较直观的设置还是位置、看向和上方向，依靠这三个向量，可以算出 $\vec u$、$\vec v$ 和 $\vec w$。</p>
+<h1 id="10-焦散模糊"><a href="#10-焦散模糊" class="headerlink" title="10 焦散模糊"></a>10 焦散模糊</h1><p>aka “景深”。</p>
+<p>焦散模糊产生的原因与相机镜头的结构有关。针孔相机不会焦散，而使用透镜组的相机只能将一定距离（焦距）的光线完美聚焦到底片上，其他距离的物体就会变得模糊。</p>
+<h2 id="10-1-薄透镜近似"><a href="#10-1-薄透镜近似" class="headerlink" title="10.1 薄透镜近似"></a>10.1 薄透镜近似</h2><p>我们把一组透镜视作一个薄透镜模型，只关心射入和射出的光线取向。</p>
+<p>我们可以用简单的方法模拟一条导致模糊的光线。说到底，焦散模糊就是感光点接收到了（因为不完美的聚焦而）不属于这个位置的光线。我们定一个焦散的半径，然后在这个圆内随机一个偏移向量，加上相机中心位置就得到了“本该”接收这条光线的感光点。这个流程可以在每次从相机获取光线时完成。如果要算的像素就在焦平面上，随机取起点的这些光线得到的结果都会是一样的，否则就会因为方向不同而得到不同的颜色。</p>
+<h1 id="11-总结"><a href="#11-总结" class="headerlink" title="11 总结"></a>11 总结</h1><p>至此，一个简单的路径追踪渲染器就写好了。</p>
+<p>我们可以继续深入的部分，以及根本没有实现的部分有：</p>
+<ul>
+<li>光源，特化出一个光源类或者实现一个发光的材质都行</li>
+<li>泛用的模型，一般用三角形网格或者四边形来组合模型的表面，这里只有球体</li>
+<li>表面纹理，贴上更复杂的午图案，甚至用来实现表面法线和全局光照，加速渲染</li>
+<li>固体纹理，3D 的纹理</li>
+<li>Volumes 和 Media，没看懂，应该是和体素有关系，</li>
+<li>并行计算，并行多个小采样数的计算并取均值，或者并行渲染图像的不同部分</li>
+<li>加速结构，八叉树、AABB、BVH（Bounding Volume Hierarchy）等</li>
+</ul>
+<p>代码的总体结构：</p>
+<ul>
+<li>基础数据结构<ul>
+<li>颜色、空间点需要的数据结构、运算函数和随机变量等功能</li>
+<li>光线</li>
+<li>圆周率等常量、角度弧度转换等功能函数</li>
+<li>光线与几何体的相交信息，包括交点、交点材质、相交时间（用于实现遮挡）等</li>
+</ul>
+</li>
+<li>几何体<ul>
+<li>抽象的几何体基类</li>
+<li>派生的球体</li>
+<li>几何体列表，根据指定的光线，对所有几何体检查碰撞，并记录最先发生的碰撞信息</li>
+</ul>
+</li>
+<li>材质<ul>
+<li>如果发生了碰撞，对光线进行吸收或散射/反射，同时做衰减以表现颜色</li>
+</ul>
+</li>
+<li>相机<ul>
+<li>可定位，可设置焦散和焦平面，根据光路可逆来“发出”光线</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2022/02/26/slowpt/" title="简单光追渲染器 SlowPT">https://f-jason.site/blog/2022/02/26/slowpt/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Computer-Graphics/" rel="tag"># Computer Graphics</a>
+              <a href="/blog/tags/Project/" rel="tag"># Project</a>
+              <a href="/blog/tags/SlowPT/" rel="tag"># SlowPT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/12/31/2021-annual/" rel="prev" title="2021 年度总结">
+      <i class="fa fa-chevron-left"></i> 2021 年度总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/04/08/pbr-book-01/" rel="next" title="基于物理的渲染：从理论到实现 01">
+      基于物理的渲染：从理论到实现 01 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="这个系列总算是做完了。 这篇会以 top-down 的逻辑解释整个项目做的事情。主要讲原理、关键概念和实现的时候遇到的坑，因此篇幅会比上一个要短……吧。 写的逻辑可能不太通顺，更像是旁注类型的笔记。覆盖的内容是 Ray Tracing: The Next Week 以及 Ray Tracing: The Rest of Your Life。 以及 自己实现的代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SlowPT 总结">
+<meta property="og:url" content="https://f-jason.site/blog/2022/08/07/slowpt-end/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="这个系列总算是做完了。 这篇会以 top-down 的逻辑解释整个项目做的事情。主要讲原理、关键概念和实现的时候遇到的坑，因此篇幅会比上一个要短……吧。 写的逻辑可能不太通顺，更像是旁注类型的笔记。覆盖的内容是 Ray Tracing: The Next Week 以及 Ray Tracing: The Rest of Your Life。 以及 自己实现的代码。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://f-jason.site/blog/2022/08/07/slowpt-end/image_box_spp6000.jpg">
+<meta property="article:published_time" content="2022-08-07T14:34:51.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:34:51.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Computer Graphics">
+<meta property="article:tag" content="Project">
+<meta property="article:tag" content="SlowPT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://f-jason.site/blog/2022/08/07/slowpt-end/image_box_spp6000.jpg">
+
+<link rel="canonical" href="https://f-jason.site/blog/2022/08/07/slowpt-end/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>SlowPT 总结 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA%E6%A6%82%E5%BF%B5"><span class="nav-text">1 光线追踪概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-text">1.1 光线追踪做什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-ray-tracing%EF%BC%8Cray-casting%EF%BC%8Cray-marching-%E5%92%8C-path-tracing"><span class="nav-text">1.2 ray tracing，ray casting，ray marching 和 path tracing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA%E7%9A%84%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="nav-text">1.3 路径追踪的大致流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8A"><span class="nav-text">2 代码解释</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%90%91%E9%87%8F"><span class="nav-text">2.1 向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E7%9B%B8%E6%9C%BA"><span class="nav-text">2.2 相机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E6%AD%A3%E4%BA%A4%E5%9F%BA"><span class="nav-text">2.3 正交基</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%85%89%E7%BA%BF"><span class="nav-text">2.4 光线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E7%89%A9%E4%BD%93"><span class="nav-text">2.5 物体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-0-%E9%87%87%E6%A0%B7%E5%92%8C%E6%A6%82%E7%8E%87%E5%AF%86%E5%BA%A6%E5%80%BC"><span class="nav-text">2.5.0 采样和概率密度值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-1-%E7%90%83%E4%BD%93"><span class="nav-text">2.5.1 球体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-3-%E7%9F%A9%E5%BD%A2"><span class="nav-text">2.5.3 矩形</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-4-%E7%AB%8B%E6%96%B9%E4%BD%93"><span class="nav-text">2.5.4 立方体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-5-%E5%9D%87%E5%8C%80%E5%8F%82%E4%B8%8E%E4%BB%8B%E8%B4%A8"><span class="nav-text">2.5.5 均匀参与介质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-6-%E2%80%9C%E7%89%A9%E4%BD%93%E2%80%9D"><span class="nav-text">2.5.6 “物体”</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-6-1-%E5%B9%B3%E7%A7%BB"><span class="nav-text">2.5.6.1 平移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-6-2-%E6%97%8B%E8%BD%AC"><span class="nav-text">2.5.6.2 旋转</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-7-%E5%9C%BA%E6%99%AF%E5%92%8C%E5%8A%A0%E9%80%9F%E7%BB%93%E6%9E%84"><span class="nav-text">2.5.7 场景和加速结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-7-1-%E5%9F%BA%E7%A1%80%E5%9C%BA%E6%99%AF%E5%88%97%E8%A1%A8"><span class="nav-text">2.5.7.1 基础场景列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-7-2-%E8%BD%B4%E5%90%91%E5%8C%85%E5%9B%B4%E7%9B%92-AABB"><span class="nav-text">2.5.7.2 轴向包围盒 AABB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-7-3-%E5%B1%82%E6%AC%A1%E5%8C%85%E5%9B%B4%E4%BD%93-BVH"><span class="nav-text">2.5.7.3 层次包围体 BVH</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E6%9D%90%E8%B4%A8"><span class="nav-text">2.6 材质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E7%BA%B9%E7%90%86"><span class="nav-text">2.7 纹理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83%E5%87%BD%E6%95%B0"><span class="nav-text">2.8 概率分布函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-%E7%A7%AF%E5%88%86%E5%99%A8"><span class="nav-text">2.9 积分器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-10-%E5%9B%BE%E5%83%8F%E5%BA%93"><span class="nav-text">2.10 图像库</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%85%B6%E4%BB%96"><span class="nav-text">3 其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%8F%82%E8%80%83"><span class="nav-text">4 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2022/08/07/slowpt-end/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SlowPT 总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-07 22:34:51" itemprop="dateCreated datePublished" datetime="2022-08-07T22:34:51+08:00">2022-08-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Record/" itemprop="url" rel="index"><span itemprop="name">Record</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/blog/2022/08/07/slowpt-end/image_box_spp6000.jpg" alt="image"></p>
+<p>这个系列总算是做完了。</p>
+<p>这篇会以 top-down 的逻辑解释整个项目做的事情。主要讲原理、关键概念和实现的时候遇到的坑，因此篇幅会比上一个要短……吧。</p>
+<p>写的逻辑可能不太通顺，更像是旁注类型的笔记。覆盖的内容是 <a target="_blank" rel="noopener" href="https://raytracing.github.io/books/RayTracingTheNextWeek.html"><em>Ray Tracing: The Next Week</em></a> 以及 <a target="_blank" rel="noopener" href="https://raytracing.github.io/books/RayTracingTheRestOfYourLife.html"><em>Ray Tracing: The Rest of Your Life</em></a>。</p>
+<p>以及 <a target="_blank" rel="noopener" href="https://github.com/JasonPhone/slowpt">自己实现的代码</a>。</p>
+<span id="more"></span>
+<h1 id="1-光线追踪概念"><a href="#1-光线追踪概念" class="headerlink" title="1 光线追踪概念"></a>1 光线追踪概念</h1><p>这部分解释一下项目大概是个啥。首先说计算机图形学是什么。</p>
+<p>简单来说，计算机图形学的研究对象是所有人眼可以看到的事物，但与 CV 不同的是，图形学研究如何利用计算机将这些对象建模并以图像等方式表示出来，而不是从表示好的数据中恢复原始的物体信息。图形学在建模、渲染、动画和人机交互等方向的研究，都是为了这一个目标而努力。</p>
+<h2 id="1-1-光线追踪做什么"><a href="#1-1-光线追踪做什么" class="headerlink" title="1.1 光线追踪做什么"></a>1.1 光线追踪做什么</h2><p>渲染基本上是图形处理的最后一环，负责把已经处理好的物体和光源转换成一张或一系列图片。主流的渲染方式分两种，光栅化 rasterization 和光线追踪 ray tracing。光栅化是非常经典的方法，它通过一系列坐标变换和裁剪，将使用顶点表示的物体映射到屏幕空间，再根据顶点信息生成像素颜色。光栅化方法对每个物体（或者说面片）的处理策略都是一样的，因此非常适合计算机处理，而缺点则是法向量等对光照非常关键的信息在齐次变换下并不总是一致，导致比较难模拟光线的行为，在基于物理的渲染上比较乏力。</p>
+<p>光线追踪则是从屏幕空间去反向追踪光线在场景中的行为，获得屏幕上像素的颜色，进而生成整张图片。这是一个更符合物理和直觉的方法，在处理透明物体、粗糙物体、阴影等方面都优于光栅化。其缺点，或者说所有模拟方法的通病，就是巨大且难以加速的计算量。</p>
+<h2 id="1-2-ray-tracing，ray-casting，ray-marching-和-path-tracing"><a href="#1-2-ray-tracing，ray-casting，ray-marching-和-path-tracing" class="headerlink" title="1.2 ray tracing，ray casting，ray marching 和 path tracing"></a>1.2 ray tracing，ray casting，ray marching 和 path tracing</h2><p>一点点消歧。</p>
+<p>广义上的 ray tracing 就是指通过模拟光线行为实现渲染的方法，如果要对应一个具体方法，就是从屏幕（或者说相机）投出一条光线，递归追踪它与场景中物体的相交情况，或者干脆在第一次相交就确定光线颜色。</p>
+<p>path tracing 在追踪光线时使用了蒙特卡洛积分，积分对象是渲染方程，或者说 BRDF 等材质函数。由于引入了随机采样，采样策略就是一个需要注意的地方，无偏的采样策略结果更正确，而有偏的策略可能有收敛快、方差小等优点。</p>
+<p>ray casting 是体渲染的一种实现，从相机向纹理射出一条光线，光线经过的纹理形成光线的颜色。感觉也可以叫 line shooting。</p>
+<p>ray marching 则是一种“过程性”的模拟方式，它将光线每次步进固定或可变长度，处理期间经过的的数据。</p>
+<h2 id="1-3-路径追踪的大致流程"><a href="#1-3-路径追踪的大致流程" class="headerlink" title="1.3 路径追踪的大致流程"></a>1.3 路径追踪的大致流程</h2><p>可以从生成一个像素的过程看路径追踪的流程。</p>
+<p>首先明确几个主体：光源、物体、相机。其他对象在下一小节会提到。</p>
+<p>相机维护一张结果图片，即一个像素阵列，并负责向场景透射光线。通过每个像素投出的光线不止一条，而且是在像素覆盖的方向内随机取得。</p>
+<p>光线与场景的交互是一个递归过程。根据光线与场景内物体和光源的相交情况，求得最初从相机投出的光线颜色，累加到这个像素的采样结果上，再求平均，经 gamma 校正后就是要写入像素的颜色。</p>
+<h1 id="2-代码解释"><a href="#2-代码解释" class="headerlink" title="2 代码解释"></a>2 代码解释</h1><p>接下来讲一下设计上的几个对象。差不多是解释一下每个文件干的事情，以及实现时的一些要点。</p>
+<h2 id="2-1-向量"><a href="#2-1-向量" class="headerlink" title="2.1 向量"></a>2.1 向量</h2><p>向量形式的数据贯穿整个渲染流程。除了需要支持常见的向量运算，还需要实现三维向量的一些随机采样，比如在单位球内、单位球面或者半球面上的均匀分布，以及在球面外一点对球面均匀采样。</p>
+<p>此外，点和 RGB 颜色使用的也是向量，直接别名就好。</p>
+<h2 id="2-2-相机"><a href="#2-2-相机" class="headerlink" title="2.2 相机"></a>2.2 相机</h2><p>相机类算是比较独立的一个类了，设定好朝向之后只管生成光线。</p>
+<p>初始化一个相机需要设置的参数有：</p>
+<ul>
+<li>相机位置，光线的出发点。</li>
+<li>视点，相机凝视的位置。</li>
+<li>上方向，指示相机“上方”的方向向量。以上三个参数的设计参考了 OpenGL。根据这三个参数可以构造出以相机为原点的一组正交基。</li>
+<li>水平视角，相机视场的水平张角。</li>
+<li>图像宽高比，顾名思义。</li>
+<li>光圈直径，用于实现焦散。</li>
+<li>焦距，这里是成像平面到相机位置的距离。</li>
+<li>曝光开始和结束时间，即光圈打开和关闭的时间，主要用于实现动态模糊。</li>
+</ul>
+<p>根据传入的参数，相机会维护一个抽象的、与像素无关的成像平面，可以根据传入的（归一化之后的）相对位置，生成射向对应位置的光线，而光线记录的时间在曝光时间区间内随机取得。</p>
+<h2 id="2-3-正交基"><a href="#2-3-正交基" class="headerlink" title="2.3 正交基"></a>2.3 正交基</h2><p>正交基主要用来减少生成与法向相关的随机向量的代码量。比如指定某个半球面的均匀分布，或者指定某个法向的朗博特散射，可以转化为生成固定朝向 z 轴的随机向量，再数乘一个以法向为 z 轴的正交基。这样比考虑如何旋转向量更简洁。</p>
+<p>正交基的构造需要两个不平行的向量，我们已经有了法向量作为之一，而另外一个向量需要尽可能不平行，这里采用的方法是当法向量在世界坐标系下的某个分量接近 1 时，取其他分量的单位向量，否则取这个分量的单位向量。</p>
+<h2 id="2-4-光线"><a href="#2-4-光线" class="headerlink" title="2.4 光线"></a>2.4 光线</h2><p>光线需要支持求交，所以我们使用参数方程实现。一个源点加一个方向，再来一个时间参数就可以了。</p>
+<h2 id="2-5-物体"><a href="#2-5-物体" class="headerlink" title="2.5 物体"></a>2.5 物体</h2><p>广义上的物体就是可以和光线交互的所有类，派生出球体、矩形、立方体、均匀参与性介质，以及场景的若干结构。</p>
+<p>总体而言，物体需要支持求交、求包围盒、求材质坐标等功能，如果要实现对物体采样，还需要支持求随机样本和概率密度。</p>
+<ul>
+<li>求交需要测试一条光线在给定时间区间内是否与物体相交，返回相交信息，包括交点、相交时间、交点材质、材质坐标、法向量和光线方向（区分内外侧）。</li>
+<li>求包围盒则是返回物体的包围盒即可。</li>
+<li>材质坐标需要根据物体的几何形状将表面的三维点映射为一个二维点。</li>
+<li>随机取样和概率密度马上就讲。</li>
+</ul>
+<h3 id="2-5-0-采样和概率密度值"><a href="#2-5-0-采样和概率密度值" class="headerlink" title="2.5.0 采样和概率密度值"></a>2.5.0 采样和概率密度值</h3><p>为了实现对物体的采样，我们需要根据给定的源点生成物体表面的一个随机位置。同时，也需要知道得到这样一个采样的概率，如此才能适合蒙特卡洛积分。</p>
+<p>采样一般使用单位球面坐标，则只需要处理 $\theta$ 和 $\varphi$ 两个值。在各向同的采样下，$\varphi$ 可以视作在 $[-\pi, \pi]$ 上均匀分布，而偏离法向的角度 $\theta$ 的概率累计函数符合：</p>
+<script type="math/tex; mode=display">
+\int_0^\theta 2\pi\sin(t)f(t)\mathrm{d}t</script><p>其中 $2\pi \sin(t)$ 为偏离法向量 $t$ 角度的圆周长，$f(t)$ 为取一个偏离法向量 $t$ 角度的采样方向的概率。</p>
+<h3 id="2-5-1-球体"><a href="#2-5-1-球体" class="headerlink" title="2.5.1 球体"></a>2.5.1 球体</h3><p>球体的实现比较简单。代码里实现的是匀速移动的球体，只要确定时间点就可以当作静止球体来处理。求材质坐标需要一点球面坐标知识。</p>
+<p>（从球面外一点）对球体均匀采样，就是对视锥能够看到的球面均匀采样。根据距离和半径我们可以算出视锥的张角，然后生成采样，套入法向量的正交基即可。</p>
+<h3 id="2-5-3-矩形"><a href="#2-5-3-矩形" class="headerlink" title="2.5.3 矩形"></a>2.5.3 矩形</h3><p>为了方便实现，我只写了三种轴平行的（或者说垂直于某个轴的）矩形，然后通过“扭转光线”的方式实现旋转后的物体。</p>
+<p>因此，只需要 5 个参数就可以描述一个矩形：在垂直轴上的坐标，以及在另外两根轴上的区间。如果要实现单向的一些特性，还可以指定表面法向。</p>
+<p>求交时利用光线起点和矩形在垂直轴上的距离算出到达时间，再根据与矩形平面的交点计算是否在矩形内即可。</p>
+<p>矩形的采样很简单，面上随机一个点，减去源点就能得到从源点向矩形采样的一个方向。</p>
+<h3 id="2-5-4-立方体"><a href="#2-5-4-立方体" class="headerlink" title="2.5.4 立方体"></a>2.5.4 立方体</h3><p>立方体，把六个矩形拼起来就行。</p>
+<p>立方体仍然是轴平行的，根据两个对角的点来确定六个面的大小和位置。注意指定好法向。</p>
+<p>至于六个面的存储，可以用数组，也可以用物体列表。用物体列表的抽象程度更好。</p>
+<h3 id="2-5-5-均匀参与介质"><a href="#2-5-5-均匀参与介质" class="headerlink" title="2.5.5 均匀参与介质"></a>2.5.5 均匀参与介质</h3><p>这个东西有点麻烦。我们想要的是均匀的雾状效果，即光线在经过物体时不断散射。</p>
+<p>一般来说，光线在介质中行进的距离与被散射的概率成正比，比例系数与介质的光学密度相关。</p>
+<p>要模拟这样的效果，可以在光线与介质相交（穿过，或从内部穿出）时算出经过的总距离，再随机一个散射前经过的距离，如果从光线起点经过这个距离后超出了总距离，则认为不散射，否则产生一个相交记录。对于散射前距离的随机，书上这里是直接给了一个公式，即光学密度的负倒数乘上 $[0, 1)$ 之间的均匀分布。</p>
+<h3 id="2-5-6-“物体”"><a href="#2-5-6-“物体”" class="headerlink" title="2.5.6 “物体”"></a>2.5.6 “物体”</h3><p>光不过来，我就过去。</p>
+<p>这里讲一些继承自物体类但是只负责改变原本物体的类。它们可以通过抽象嵌套修改一个实际物体。</p>
+<h4 id="2-5-6-1-平移"><a href="#2-5-6-1-平移" class="headerlink" title="2.5.6.1 平移"></a>2.5.6.1 平移</h4><p>将一个物体向某处平移，相当与将那处的光线平移过来与物体求交。逻辑就是这么简单。记得求交之后把相交记录的交点平移回去。</p>
+<h4 id="2-5-6-2-旋转"><a href="#2-5-6-2-旋转" class="headerlink" title="2.5.6.2 旋转"></a>2.5.6.2 旋转</h4><p>只实现了绕 y 轴旋转。与平移的逻辑相同，不过是手动实现了旋转矩阵。另外<em>一定记得恢复相交记录的法向量</em>，如果没有恢复法向量，渲染 Cornell Box 时会发现长方体的正面上部偏黑且不均匀。当时查了好久。</p>
+<h3 id="2-5-7-场景和加速结构"><a href="#2-5-7-场景和加速结构" class="headerlink" title="2.5.7 场景和加速结构"></a>2.5.7 场景和加速结构</h3><p>场景记录了所有物体，其最抽象的行为就是根据光线去查询相情况。</p>
+<h4 id="2-5-7-1-基础场景列表"><a href="#2-5-7-1-基础场景列表" class="headerlink" title="2.5.7.1 基础场景列表"></a>2.5.7.1 基础场景列表</h4><p>基础场景是用顺序表实现的，所有物体放在一个 vector 里面，查询时挨个遍历。比较慢。</p>
+<h4 id="2-5-7-2-轴向包围盒-AABB"><a href="#2-5-7-2-轴向包围盒-AABB" class="headerlink" title="2.5.7.2 轴向包围盒 AABB"></a>2.5.7.2 轴向包围盒 AABB</h4><p>一个显然的加速方法是，用结构比物体更简单的包围盒包住物体，如果光线与包围盒不相交，则一定不与其中的物体相交，否则再仔细去和其中的物体求交。</p>
+<p>包围盒这里选用的是 Axis-Aligned Bounding Box。求交策略比较巧妙：求出光线与三对轴向面的相交时间区间，如果这三个区间并集为空则不相交，否则相交。</p>
+<p>每种物体的包围盒构造需要各自实现。旋转和平移当然也需要构造新的包围盒。注意两点：无限平面（代码没有实现）等物体是没有包围盒的，而矩形面这种太薄的物体，应设定一个最小厚度。</p>
+<p>AABB 类没有继承物体基类，因为不需要返回求交信息。如果想让 AABB 可视化，也可以继承。</p>
+<h4 id="2-5-7-3-层次包围体-BVH"><a href="#2-5-7-3-层次包围体-BVH" class="headerlink" title="2.5.7.3 层次包围体 BVH"></a>2.5.7.3 层次包围体 BVH</h4><p>AABB 的思想如果再抽象一下，很容易想到把若干个物体合并成一个包围盒，如果相交，再去和更低一级的几个包围盒求交，而这些小一点的包围盒也是包含了若干物体的。这是一个包围盒的树形结构，即 Bounding Volume Hierarchy。</p>
+<p>每个包围盒的细分，是两个更小的子包围盒。显然兄弟包围盒并非不相交的，我们需要让交集尽可能小，避免重复的查询。但是如果严格遵守这个性质，会影响构造 BVH 的效率。因此我们的策略是：在世界坐标系中随机一个比较轴，将父包围盒内的物体按照在各自包围盒比较轴上的最小坐标排升序，然后从中间切分，递归构造下一层。</p>
+<p>由于 BVH 节点继承自物体基类，光线求交可以通过重写的求交函数实现。如果传入的光线不和节点本身的包围盒相交，则返回不相交，否则对两个子包围盒求交。注意这里查询求交的时间区间。我们需要的是第一次相交，即最小的时间。因此，如果先求交的子包围盒确认了相交，再查询另一个子包围盒时，时间区间的最大值应该是上一次相交的时间。这是一个设计上的选择，固定时间区间然后比较相交时间也可行，但是开销会变大。</p>
+<h2 id="2-6-材质"><a href="#2-6-材质" class="headerlink" title="2.6 材质"></a>2.6 材质</h2><p>物体只描述了形状，而视觉效果与物体分离，通过材质实现。每个可以被“看见”的物体都拥有一个材质，在求交时将材质记录下来，这样不必依赖物体本身就可以获取光线的行为。材质负责将入射光线散射出去，并告知积分器取到这个散射方向的概率。我们现在处理的光线和颜色是独立的，可以用一个结构体记录光线、颜色等信息。</p>
+<p>在控制光线行为方面，材质实现了散射和发光。散射负责生成新的光线（后面改成了传出颜色、光线分布函数等信息），而发光是针对光源实现的，在积分器里直接叠加到总体颜色上。</p>
+<h2 id="2-7-纹理"><a href="#2-7-纹理" class="headerlink" title="2.7 纹理"></a>2.7 纹理</h2><p>材质对光线附加的颜色，是纹理来负责的。从纹理获取颜色一般需要提供 UV 坐标（二维函数），如果是空间函数还需要提供相交点。</p>
+<p>这部分的 Berlin 噪声比较有意思，有点像伪随机序列。</p>
+<h2 id="2-8-概率分布函数"><a href="#2-8-概率分布函数" class="headerlink" title="2.8 概率分布函数"></a>2.8 概率分布函数</h2><p>由于路径追踪涉及到蒙特卡洛积分，概率相关的处理就非常重要。</p>
+<p>用蒙特卡洛积分计算像素颜色有一个常见的问题，即采样数不够的情况下，容易出现黑色的像素点。这是因为多数光线被散射到了场景之外，或需要多次弹射才能击中光源的方向。</p>
+<p>这里需要区分两个分布：物体材质决定的散射分布和积分器选择的采样分布。前者是相对固定的，属于积分方程的一部分，后者才是需要调整来减少噪点的。特殊地，镜面反射和高光等光路是确定的，不需要前者。</p>
+<p>将随机采样独立成一个概率分布函数，就可以嵌套混合的采样方式（重要性采样），比如向镜面和光源投射更多的采样。这需要概率分布函数提供采样和此采样的概率。前文提到的物体类中的随机采样，就是为针对物体的概率分布准备的。</p>
+<h2 id="2-9-积分器"><a href="#2-9-积分器" class="headerlink" title="2.9 积分器"></a>2.9 积分器</h2><p>代码里的积分器，其实就是 <code>ray_color</code> 这个函数。为了能让人快速看懂整个渲染过程，现在做一个详细的描述。</p>
+<p>积分器接收一条光线、一个背景色、一个场景、一个采样物体列表（重要性采样用），以及一个递归深度。</p>
+<p>首先是一些终止递归的检查，比如超过深度、无相交之类。超过深度返回黑色，无相交则返回背景色。背景色可以改成一个函数，然后实现天空盒等效果。</p>
+<p>接着是有相交的情况，此时已经有了相交点的位置、法向、相交时间、材质、UV 坐标等信息。先获得材质的发光颜色，然后测试是否发生散射。如果不散射，则返回发光颜色，否则根据获取的散射信息进一步处理。</p>
+<p>如果散射是来自镜面、高光等确定光路，则不需要随机采样，直接用散射的光线和颜色进行递归。否则，根据采样物体列表构造一个物体采样函数，与散射记录的采样函数线性混合，据此生成一个新的光线并获得其采样概率，再进行递归，返回的结果就是 $材质发光 + \frac{散射颜色\times 散射光线后续的递归颜色 \times 材质散射出此光线的概率}{散射采样概率}$。</p>
+<h2 id="2-10-图像库"><a href="#2-10-图像库" class="headerlink" title="2.10 图像库"></a>2.10 图像库</h2><p>使用了两个图像库，都是来自 Sean T. Barrett 的 <a target="_blank" rel="noopener" href="https://github.com/nothings/stb">stb 库</a>，分别是读取和写入。读取在图像材质里用到了，而写入是用来把渲染结果转成 jpg 格式，字符型 ppm 文件打开速度太慢了。</p>
+<h1 id="3-其他"><a href="#3-其他" class="headerlink" title="3 其他"></a>3 其他</h1><p>浮点问题要仔细考虑，这个算是一直萦绕的幽灵了。</p>
+<p>0 到 255 的颜色是单位化成 0 到 1 的，但是光源的颜色可以超过 1，即亮度很高。事实上如果光源颜色还是 0 到 1 的话场景会非常暗。</p>
+<p>至此，这个小路径追踪器算是写完了。下面摘自书中结语：</p>
+<p>蒙特卡洛方法还包括了双向和基于路径空间的方法，这些方法的概率空间是整个光线路径。</p>
+<p>电影渲染器方向，相关的工作室发表了很多研究成果。</p>
+<p>高性能光追当属 NVIDIA 和 Intel 的研究。</p>
+<p>如果要做事实上的“PBR”，首先要做的是把颜色描述从 RGB 空间转换到光谱空间。</p>
+<p>以及，谨以此文祝贺 <a target="_blank" rel="noopener" href="https://openmoonray.org/MoonRayPressRelease.pdf">MoonRay 即将开源</a>。<del>真不是摸了太久才写完的</del></p>
+<h1 id="4-参考"><a href="#4-参考" class="headerlink" title="4 参考"></a>4 参考</h1><p><a target="_blank" rel="noopener" href="http://staff.ustc.edu.cn/~lgliu/Resources/CG/What_is_CG.htm"><em>什么是计算机图形学?</em></a></p>
+<p><a target="_blank" rel="noopener" href="https://raytracing.github.io/books/RayTracingTheNextWeek.html"><em>Ray Tracing: The Next Week</em></a></p>
+<p><a target="_blank" rel="noopener" href="https://raytracing.github.io/books/RayTracingTheRestOfYourLife.html"><em>Ray Tracing: The Rest of Your Life</em></a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2022/08/07/slowpt-end/" title="SlowPT 总结">https://f-jason.site/blog/2022/08/07/slowpt-end/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Computer-Graphics/" rel="tag"># Computer Graphics</a>
+              <a href="/blog/tags/Project/" rel="tag"># Project</a>
+              <a href="/blog/tags/SlowPT/" rel="tag"># SlowPT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/04/08/pbr-book-01/" rel="prev" title="基于物理的渲染：从理论到实现 01">
+      <i class="fa fa-chevron-left"></i> 基于物理的渲染：从理论到实现 01
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/12/31/2022-annual/" rel="next" title="2022 年度总结">
+      2022 年度总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

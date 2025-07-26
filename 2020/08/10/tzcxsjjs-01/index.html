@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="《挑战程序设计竞赛：第2版》 ISBN 978-7-115-32010-0  因为第一章介绍的都是常识性内容，这章的笔记会有比较多的吐槽和回忆成分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="挑战程序设计竞赛 01 章">
+<meta property="og:url" content="https://f-jason.site/blog/2020/08/10/tzcxsjjs-01/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="《挑战程序设计竞赛：第2版》 ISBN 978-7-115-32010-0  因为第一章介绍的都是常识性内容，这章的笔记会有比较多的吐槽和回忆成分。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-08-10T14:52:09.000Z">
+<meta property="article:modified_time" content="2020-08-10T14:52:09.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta property="article:tag" content="《挑战程序设计竞赛》">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/08/10/tzcxsjjs-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>挑战程序设计竞赛 01 章 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AB%9E%E8%B5%9B"><span class="nav-text">程序设计竞赛</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-text">算法复杂度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%83%AD%E8%BA%AB%E9%A2%98"><span class="nav-text">热身题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A7%92%E5%BD%A2"><span class="nav-text">三角形</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9A%B4%E5%8A%9B-O-n-3"><span class="nav-text">暴力 $O(n^3)$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F-O-n-log-n"><span class="nav-text">排序 $O(n\log n)$</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9A%82%E8%9A%81%EF%BC%88POJ-1852%EF%BC%89"><span class="nav-text">蚂蚁（POJ 1852）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9A%B4%E5%8A%9B-O-2-n"><span class="nav-text">暴力 $O(2^n)$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E7%BB%B4-O-n"><span class="nav-text">思维 $O(n)$</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%BD%E7%AD%BE"><span class="nav-text">抽签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9A%B4%E5%8A%9B-O-n-4"><span class="nav-text">暴力 $O(n^4)$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86-O-n-3-log-n"><span class="nav-text">二分 $O(n^3\log n)$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86-O-n-2-log-n"><span class="nav-text">二分 $O(n^2\log n)$</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/08/10/tzcxsjjs-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          挑战程序设计竞赛 01 章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-10 22:52:09" itemprop="dateCreated datePublished" datetime="2020-08-10T22:52:09+08:00">2020-08-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Reading/" itemprop="url" rel="index"><span itemprop="name">Reading</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>《挑战程序设计竞赛：第2版》</p>
+<p>ISBN 978-7-115-32010-0</p>
+</blockquote>
+<p>因为第一章介绍的都是常识性内容，这章的笔记会有比较多的吐槽和回忆成分。</p>
+<span id="more"></span>
+<h1 id="程序设计竞赛"><a href="#程序设计竞赛" class="headerlink" title="程序设计竞赛"></a>程序设计竞赛</h1><p>我重点关注的是解题类的程序设计竞赛。其他类别有性能竞赛（数据挖掘和人工智能？）、创意竞赛（应用设计开发）之类。</p>
+<p>解题竞赛可以理解成做题竞赛，写代码提交，测评机会用一堆输入检查代码的输出，对得多、做得快的排名高。题目的形式一般是题面 + 输入输出规定 + 样例 + 数据规模 + 时间和空间限制。题面往往有一半的废话用来创设情景，讲一个和小明相关的故事，另外一半是真正提问题的，暗示或明示了该题需要用到的数据结构和算法。输入输出的格式会有严格的限制，这一方面减少了读入数据的难度，另一方面也会卡一部分选手，比如最后一个输入末尾没有回车，这需要读入检查 EOF，或要求行末不能有空格、必须以样例编号 + 空格 + 答案的格式输出之类。样例是参考的输入和对应的正确输出，可能会帮助选手发现没考虑到的边界条件，也可能就是普通的数据，甚至可能故意绕过掩盖一些坑，导致过了样例但是WA的结果。数据规模可能放在题面里，也可能单独领出来。时空限制规定了本题的代码应该在某个时间内。利用不超过一定大小的内存输出全部答案。这两个限制往往决定了这题可以暴力过还是必须用特殊算法。</p>
+<p>赛制和赛程方面，各竞赛不尽相同。OI和类ACM（现在叫ICPC？）区别比较大。</p>
+<p>大体上，要求算得对、算得快，这需要算法的学习、刷题和一定的想象力。是非常接近高中学习模式的竞赛之一。</p>
+<p>知名度比较高的比赛有高中搞的OI（NOIP、NOI、IOI），属于奥林匹克竞赛之一，当然和奥赛一样越来越难出（对高中升学有帮助的）成果；Google 开的 <a target="_blank" rel="noopener" href="https://codingcompetitions.withgoogle.com/codejam">GCJ</a>，输入数据的规模分 Small 和 Large，小难题的小数据也可能暴力过；TopCoder，特点是 challenge phase 和类 OI 的单次提交；ACM-ICPC，三人一队一机，5小时10道题，对团队配合要求高。关于GCJ的信息这本书上的比较旧了。</p>
+<p>此外有很多使用在线评测功能的做题网站（Online Judge），比如北大的<a target="_blank" rel="noopener" href="http://poj.org/">POJ</a>，杭电的<a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/">HDOJ</a>，俄罗斯的<a target="_blank" rel="noopener" href="http://codeforces.com/">Codeforces</a>，日本的<a target="_blank" rel="noopener" href="http://judge.u-aizu.ac.jp/onlinejudge/">AOJ</a>。还有像<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/">洛谷</a>、<a target="_blank" rel="noopener" href="https://loj.ac/">LibreOJ</a>、<a target="_blank" rel="noopener" href="http://uoj.ac/">UOJ</a>这样很活跃的国内OJ。各个 OJ 的使用方法参考它们的网站。</p>
+<p>语言方面，C++。它提供了一些比较好用的通用数据结构（比如链表、队列、栈）和算法（比如排序、排列），同时保证了运行效率。Java 也可以，但是会慢。许多 OJ 对 Java 的时间空间限制都是其他语言的两倍。同样属于其他语言的 Python 因为速度往往不如 C++ 而经常被卡时间，所以入门之后就可以丢掉了。Pascal 快死了。NOIP在<a target="_blank" rel="noopener" href="http://www.noi.cn/newsview.html?id=932&amp;hash=72F731&amp;type=1">2019年</a>和2022年之后都不支持 Pascal。</p>
+<p>提交后常见的状态</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">状态</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Compile Error</td>
+<td style="text-align:left">CE，编译不通过，一般会给出报错信息</td>
+</tr>
+<tr>
+<td style="text-align:left">Memory Limit Exceeded</td>
+<td style="text-align:left">MLE，爆空间，使用了超过限制的内存</td>
+</tr>
+<tr>
+<td style="text-align:left">Time Limit Exceeded</td>
+<td style="text-align:left">TLE，爆时间，算法正确但是太慢，或者某个地方死循环，或者输入有问题，样例输完了程序还在等输入</td>
+</tr>
+<tr>
+<td style="text-align:left">Output Limit Exceeded</td>
+<td style="text-align:left">OLE，比较少见，是输出了太多东西</td>
+</tr>
+<tr>
+<td style="text-align:left">System Error, Validator Error</td>
+<td style="text-align:left">测评机坏了</td>
+</tr>
+<tr>
+<td style="text-align:left">Presentation Error</td>
+<td style="text-align:left">PE，除了AC之外最喜欢看到的报错，意思是答案正确但是换行或空格不符合要求</td>
+</tr>
+<tr>
+<td style="text-align:left">Accepted</td>
+<td style="text-align:left">AC，完全正确，可以做下一题了</td>
+</tr>
+<tr>
+<td style="text-align:left">Wrong Answer</td>
+<td style="text-align:left">WA，最常见的结果</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="算法复杂度"><a href="#算法复杂度" class="headerlink" title="算法复杂度"></a>算法复杂度</h1><p>分时间复杂度和空间复杂度。复杂度一般指程序消耗的资源随问题规模增长而变化的情况。比如遍历一个链表的时间复杂度和链表长度成正比，是 $O(n)$ 时间，遍历一个正方形矩阵的时间复杂度是 $O(n^2)$ 时间。 对规模较大（$1 \times 10^5$ 以上）的问题，暴力算法基本必WA。</p>
+<p>空间复杂度一般考虑得不多，优化方法有滚动列表之类的操作。</p>
+<h1 id="热身题"><a href="#热身题" class="headerlink" title="热身题"></a>热身题</h1><h2 id="三角形"><a href="#三角形" class="headerlink" title="三角形"></a>三角形</h2><blockquote>
+<p>$n$ 根给定长度的棍子, 从中选出 $3$ 根棍子组成三角形, 使周长最长. 输出周长, 无法组成则输出 $0$.</p>
+</blockquote>
+<h3 id="暴力-O-n-3"><a href="#暴力-O-n-3" class="headerlink" title="暴力 $O(n^3)$"></a>暴力 $O(n^3)$</h3><p>3层循环遍历数组，用可以组成三角形的周长去更新最大值。</p>
+<h3 id="排序-O-n-log-n"><a href="#排序-O-n-log-n" class="headerlink" title="排序 $O(n\log n)$"></a>排序 $O(n\log n)$</h3><p>由于只需要最长的周长，可以贪心。先对长度排序，选最长的三根判断。</p>
+<ul>
+<li>三根能构成三角形，则为答案</li>
+<li>三根构不成三角形，必有最短的两个长度和不大于最长长度，则直接舍去最长长度，窗口“滑动”一个单位继续判断。</li>
+</ul>
+<p>排序复杂度 $O(n\log n)$，遍历复杂度 $O(n)$。</p>
+<h2 id="蚂蚁（POJ-1852）"><a href="#蚂蚁（POJ-1852）" class="headerlink" title="蚂蚁（POJ 1852）"></a>蚂蚁（POJ 1852）</h2><blockquote>
+<p>$n$ 只蚂蚁以每秒 $1cm$ 的速度在长 $Lcm$ 的细杆上爬行，蚂蚁相遇时立刻调转方向爬行，爬到杆子两端时则掉落。已知各蚂蚁到杆左端的距离，但不知道各蚂蚁的初始朝向。求蚂蚁全部掉落需要的最短时间和最长时间。</p>
+</blockquote>
+<h3 id="暴力-O-2-n"><a href="#暴力-O-2-n" class="headerlink" title="暴力 $O(2^n)$"></a>暴力 $O(2^n)$</h3><p>枚举蚂蚁所有朝向的组合，对每种组合进行模拟/计算。</p>
+<h3 id="思维-O-n"><a href="#思维-O-n" class="headerlink" title="思维 $O(n)$"></a>思维 $O(n)$</h3><p>蚂蚁都是相同的，相遇后各自调转方向相当于穿过彼此继续前进。则最短时间则是距杆子两端最近的距离，同理得最长时间。读入时即可解决。</p>
+<h2 id="抽签"><a href="#抽签" class="headerlink" title="抽签"></a>抽签</h2><blockquote>
+<p>有 $n$ 个写有数字的签。每次抽一个，记录数字后放回，抽 $4$ 次。求抽出的数字之和是否能等于 $m$。</p>
+</blockquote>
+<h3 id="暴力-O-n-4"><a href="#暴力-O-n-4" class="headerlink" title="暴力 $O(n^4)$"></a>暴力 $O(n^4)$</h3><p>4层遍历并判断。有放回，每层从头开始。</p>
+<h3 id="二分-O-n-3-log-n"><a href="#二分-O-n-3-log-n" class="headerlink" title="二分 $O(n^3\log n)$"></a>二分 $O(n^3\log n)$</h3><p>排序。3层循环遍历，在数组中搜索 $m - a[i] - a[j] - a[k]$。</p>
+<h3 id="二分-O-n-2-log-n"><a href="#二分-O-n-2-log-n" class="headerlink" title="二分 $O(n^2\log n)$"></a>二分 $O(n^2\log n)$</h3><p>用 $n^2$ 时间保存各签两两求和的结果到一个新数组，排序后两层循环搜索 $m - a[i] - a[j]$。</p>
+<p>复杂度：$n^2\log n^2 = 2n^2\log n$</p>
+<p>就是这一系列的优化本质上是拉平每一步的复杂度，用最大的复杂度代替整体，然后靠忽略常数这一步得到更好看的结果。实际上去掉一阶换上一个大常数确实能在大规模下达到更快的速度。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/08/10/tzcxsjjs-01/" title="挑战程序设计竞赛 01 章">https://f-jason.site/blog/2020/08/10/tzcxsjjs-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/blog/tags/%E3%80%8A%E6%8C%91%E6%88%98%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AB%9E%E8%B5%9B%E3%80%8B/" rel="tag"># 《挑战程序设计竞赛》</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/07/03/test/" rel="prev" title="test">
+      <i class="fa fa-chevron-left"></i> test
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/09/04/tzcxsjjs-02-01/" rel="next" title="挑战程序设计竞赛 02 章 01">
+      挑战程序设计竞赛 02 章 01 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

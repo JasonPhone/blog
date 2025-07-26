@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="全书内容 看 PBR 这本书的笔记，以及实现 pbrt 的过程记录。 本科毕业之前应该能看完吧。 这篇对应书中的前言部分和第一章。 跟着这本书最后可以做出一个基于光线追踪的渲染器。但是现在打算先从 Shirley 的 Ray Tracing 系列入手。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于物理的渲染：从理论到实现 01">
+<meta property="og:url" content="https://f-jason.site/blog/2022/04/08/pbr-book-01/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="全书内容 看 PBR 这本书的笔记，以及实现 pbrt 的过程记录。 本科毕业之前应该能看完吧。 这篇对应书中的前言部分和第一章。 跟着这本书最后可以做出一个基于光线追踪的渲染器。但是现在打算先从 Shirley 的 Ray Tracing 系列入手。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://f-jason.site/blog/2022/04/08/pbr-book-01/01relationship_around_render.svg">
+<meta property="og:image" content="https://f-jason.site/blog/2022/04/08/pbr-book-01/02relationship_around_Li.svg">
+<meta property="article:published_time" content="2022-04-08T09:14:50.000Z">
+<meta property="article:modified_time" content="2022-04-08T09:14:50.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Computer Graphics">
+<meta property="article:tag" content="pbrt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://f-jason.site/blog/2022/04/08/pbr-book-01/01relationship_around_render.svg">
+
+<link rel="canonical" href="https://f-jason.site/blog/2022/04/08/pbr-book-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>基于物理的渲染：从理论到实现 01 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-%E4%B8%89%E4%B8%AA%E7%9B%AE%E6%A0%87"><span class="nav-text">0 三个目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%96%87%E5%AD%A6%E7%BC%96%E7%A8%8B"><span class="nav-text">1 文学编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E7%9C%9F%E5%AE%9E%E6%84%9F%E6%B8%B2%E6%9F%93%E5%92%8C%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA"><span class="nav-text">2 真实感渲染和光线追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E7%9B%B8%E6%9C%BA"><span class="nav-text">2.1 相机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%85%89%E7%BA%BF-%E7%89%A9%E4%BD%93%E6%B1%82%E4%BA%A4"><span class="nav-text">2.2 光线-物体求交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%85%89%E7%BA%BF%E5%88%86%E5%B8%83"><span class="nav-text">2.3 光线分布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-text">2.4 可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E8%A1%A8%E9%9D%A2%E6%95%A3%E5%B0%84"><span class="nav-text">2.5 表面散射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E9%97%B4%E6%8E%A5%E5%85%89%E7%85%A7"><span class="nav-text">2.6 间接光照</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E5%85%89%E7%BA%BF%E5%9C%A8%E4%BC%A0%E6%92%AD%E6%97%B6%E7%9A%84%E8%A1%8C%E4%B8%BA"><span class="nav-text">2.7 光线在传播时的行为</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%B8%B2%E6%9F%93%E5%99%A8-pbrt-%E6%A6%82%E8%A7%88"><span class="nav-text">3 渲染器 pbrt 概览</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">3.1 执行过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E5%9C%BA%E6%99%AF%E8%A1%A8%E7%A4%BA"><span class="nav-text">3.2 场景表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E7%A7%AF%E5%88%86%E5%99%A8%E6%8E%A5%E5%8F%A3%E5%92%8C-SampleIntegrator"><span class="nav-text">3.3 积分器接口和 SampleIntegrator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-%E4%B8%BB%E8%A6%81%E7%9A%84%E6%B8%B2%E6%9F%93%E5%BE%AA%E7%8E%AF"><span class="nav-text">3.4 主要的渲染循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-Whitted-%E5%85%89%E8%BF%BD%E7%A7%AF%E5%88%86%E5%99%A8-WhittedIntegrator"><span class="nav-text">3.5 Whitted 光追积分器 WhittedIntegrator</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-pbrt-%E7%9A%84%E5%B9%B6%E8%A1%8C"><span class="nav-text">4 pbrt 的并行</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E6%95%B0%E6%8D%AE%E7%AB%9E%E4%BA%89%E5%92%8C%E5%8D%8F%E8%B0%83"><span class="nav-text">4.1 数据竞争和协调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E6%83%AF%E4%BE%8B"><span class="nav-text">4.2 惯例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-pbrt-%E5%AF%B9%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E8%A6%81%E6%B1%82"><span class="nav-text">4.3 pbrt 对线程安全的要求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E5%A6%82%E4%BD%95%E7%9C%8B%E8%BF%99%E6%9C%AC%E4%B9%A6"><span class="nav-text">5 如何看这本书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-%E7%BB%83%E4%B9%A0"><span class="nav-text">5.1 练习</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-Show-Me-the-Code"><span class="nav-text">6 Show Me the Code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E6%8C%87%E9%92%88-vs-%E5%BC%95%E7%94%A8"><span class="nav-text">6.1 指针 vs 引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E6%8A%BD%E8%B1%A1-vs-%E6%95%88%E7%8E%87"><span class="nav-text">6.2 抽象 vs 效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="nav-text">6.3 代码优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E6%9C%AC%E4%B9%A6%E7%BD%91%E7%AB%99"><span class="nav-text">6.4 本书网站</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-5-%E7%B3%BB%E7%BB%9F%E6%8B%93%E5%B1%95"><span class="nav-text">6.5 系统拓展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-6-%E6%BC%8F%E6%B4%9E"><span class="nav-text">6.6 漏洞</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-PBR-%E7%AE%80%E5%8F%B2"><span class="nav-text">7 PBR 简史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-%E5%AD%A6%E6%9C%AF"><span class="nav-text">7.1 学术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-%E5%B7%A5%E4%B8%9A"><span class="nav-text">7.2 工业</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2022/04/08/pbr-book-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于物理的渲染：从理论到实现 01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-08 17:14:50" itemprop="dateCreated datePublished" datetime="2022-04-08T17:14:50+08:00">2022-04-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Reading/" itemprop="url" rel="index"><span itemprop="name">Reading</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://pbr-book.org/">全书内容</a></p>
+<p>看 PBR 这本书的笔记，以及实现 <code>pbrt</code> 的过程记录。</p>
+<p>本科毕业之前应该能看完吧。</p>
+<p>这篇对应书中的前言部分和<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction#">第一章</a>。</p>
+<p>跟着这本书最后可以做出一个基于光线追踪的渲染器。但是现在打算先从 <a target="_blank" rel="noopener" href="https://raytracing.github.io/">Shirley 的 Ray Tracing 系列</a>入手。</p>
+<span id="more"></span>
+<h1 id="0-三个目标"><a href="#0-三个目标" class="headerlink" title="0 三个目标"></a>0 三个目标</h1><p>功能完备、人类可读、物理正确。</p>
+<p>此外要做得模块化、可扩展。</p>
+<h1 id="1-文学编程"><a href="#1-文学编程" class="headerlink" title="1 文学编程"></a>1 文学编程</h1><p>不太能理解这种代码组织形式。书上本身写得就很散，给人感觉像编辑器提供的大括号折叠一样，跳转和定位链接在浏览器里的表现还很迷，直接切屏的硬跳转经常让人搞不清楚自己在看哪段代码。</p>
+<p>我在自己的项目里不打算采用所谓 Literature Programming。如果真有说的那么厉害，把它翻译成普通组织的代码应该也不麻烦。</p>
+<h1 id="2-真实感渲染和光线追踪"><a href="#2-真实感渲染和光线追踪" class="headerlink" title="2 真实感渲染和光线追踪"></a>2 真实感渲染和光线追踪</h1><p>此处“真实感”约等于物理上的真实，因为感官真实还涉及感知学、心理学这些乱七八糟的东西。</p>
+<p>几乎所有的真实感渲染都采用光追算法，而且都有以下几个内容：</p>
+<ul>
+<li>相机：决定观察整个场景的位置和方式，以及光线如何被传感器接收。一般利用光路可逆的性质从相机射出“光线”。</li>
+<li>光线-物体求交：计算光线与物体相交的时间、交点的法向、交点材质等等信息。</li>
+<li>光源：确定光源位置、光源的能量和辐射分布（辐射度量学内容）。</li>
+<li>可见性：在光追渲染的算法中比较好处理，取光线第一次相交即可。光栅化渲染做这个就比较复杂。</li>
+<li>表面散射：描述物体表面如何反射或吸收光线。</li>
+<li>间接光照：解决光线多次反射、折射等现象。</li>
+<li>光线传播：光线在真空、空气、雾等介质中传播时发生的变化。</li>
+</ul>
+<h2 id="2-1-相机"><a href="#2-1-相机" class="headerlink" title="2.1 相机"></a>2.1 相机</h2><p>主要负责生成光线，内部实现可以是针孔摄像机模型，也可以是透镜组模型。</p>
+<h2 id="2-2-光线-物体求交"><a href="#2-2-光线-物体求交" class="headerlink" title="2.2 光线-物体求交"></a>2.2 光线-物体求交</h2><p>主要关注光线与物体的第一次相交，提供要着色的位置。</p>
+<p>如果全部（如果用加速结构的话就是部分）物体的隐式方程是 $F(x, y, z) = 0$，光线为 $r(t) = \vec o + t\vec d$ 光线-物体求交就是求方程 $F(r(t)_x, r(t)_y, r(t)_z) = 0$ 的最小正数根。</p>
+<p>除了相交时间（位置），还要求出相交位置的材质、法线等等。</p>
+<h2 id="2-3-光线分布"><a href="#2-3-光线分布" class="headerlink" title="2.3 光线分布"></a>2.3 光线分布</h2><p>涉及几何上和辐射上的光线分布。</p>
+<p>常见的描述反射的模型是相交点附近的一个微分平面。理想的辐射度量会得到这个平面上的微分能量（differential irradiance）：</p>
+<script type="math/tex; mode=display">
+\mathrm{d} E = \frac{\Phi\cos\theta}{4\pi r^2}</script><h2 id="2-4-可见性"><a href="#2-4-可见性" class="headerlink" title="2.4 可见性"></a>2.4 可见性</h2><p>光线追踪里处理阴影的方法是从相交点向光源射出一条阴影射线来检查这个光源能否照到这个点，以此决定是否要考虑这个光源的贡献。</p>
+<h2 id="2-5-表面散射"><a href="#2-5-表面散射" class="headerlink" title="2.5 表面散射"></a>2.5 表面散射</h2><p>要知道一个点的颜色，光照方面我们需要知道有多少能量沿着追踪用的光线打过来。</p>
+<p>双向反射分布函数 BRDF “描述”了给定位置 $\mathrm{p}$、入射角度 $\omega_i$ 和出射角度 $\omega_o$ 下，一个材质反射的能量。实际上它的单位是立体角倒数，乘上光线的 irradiance 就可以得到这条光线在此处射出的 radiance。</p>
+<p>实际的 BRDF 以及一堆 BxxxDF 一般都是测量出来的，量纲也因为测量方法变得非常奇妙。</p>
+<h2 id="2-6-间接光照"><a href="#2-6-间接光照" class="headerlink" title="2.6 间接光照"></a>2.6 间接光照</h2><p>这是光线追踪渲染尤其擅长处理的情况。</p>
+<p>渲染方程：某处沿某方向射出的 radiance 等于物体本身的 radiance 加上附近整个球面上经过 BRDF（以下式子中的函数 $f$）和方向余弦调整之后的间接 radiance。</p>
+<script type="math/tex; mode=display">
+L_o(\mathrm{p}, \omega_o) = L_e(\mathrm{p}, \omega_o) + \int_{S^2}f(\mathrm{p}, \omega_o, \omega_i)L_i(\mathrm{p}, \omega_i)|\cos\theta_i|\mathrm{d}\omega_i</script><p>这个式子可以说是 PBR 的精髓，不仅很难理解也很难计算，需要做一些简化假设，或者用数值方法。</p>
+<p>最原始的 Whitted 光追在间接光上只处理了光源方向和全反射/折射方向。我们可以随机取遍半球方向然后用 BRDF 赋权重，这样的结果非常真实，当然运行很慢。</p>
+<p>如果递归处理光线，会得到一棵光线树，每根光线在父节点处按照特定的权值分裂。</p>
+<h2 id="2-7-光线在传播时的行为"><a href="#2-7-光线在传播时的行为" class="headerlink" title="2.7 光线在传播时的行为"></a>2.7 光线在传播时的行为</h2><p>考虑光线在介质中传播时的衰减或增强。这可能是因为光被散射出去/其他光被散射进来，也可能是因为介质本身吸收/放出光。一个经典的例子是丁达尔效应。</p>
+<h1 id="3-渲染器-pbrt-概览"><a href="#3-渲染器-pbrt-概览" class="headerlink" title="3 渲染器 pbrt 概览"></a>3 渲染器 <code>pbrt</code> 概览</h1><p>几个基本的（抽象）类：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">基类</th>
+<th style="text-align:left">路径</th>
+<th style="text-align:left">链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Shape</td>
+<td style="text-align:left">shapes/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Aggregate</td>
+<td style="text-align:left">accelerators/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Camera</td>
+<td style="text-align:left">cameras/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Sampler</td>
+<td style="text-align:left">samplers/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Filter</td>
+<td style="text-align:left">filters/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Material</td>
+<td style="text-align:left">materials/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Texture</td>
+<td style="text-align:left">textures/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">media/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Light</td>
+<td style="text-align:left">lights/</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Integrator</td>
+<td style="text-align:left">integrators/</td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><a target="_blank" rel="noopener" href="https://github.com/mmp/pbrt-v4">源代码</a>和<a target="_blank" rel="noopener" href="https://pbrt.org/scenes-v3">场景文件</a></p>
+<h2 id="3-1-执行过程"><a href="#3-1-执行过程" class="headerlink" title="3.1 执行过程"></a>3.1 执行过程</h2><p>渲染器的执行应该是基于命令行和输入文件的。输入一个 txt 文件描述物体、材质、光照等等（基于 <code>lex</code> 和 <code>yacc</code> 实现），处理得到一个场景实例和一个积分器实例，然后就开始渲染。渲染结果写到另一个文件里，系统继续执行输入文件中的剩余内容。</p>
+<p>具体来说，系统先处理附加命令，然后初始化，生成场景并渲染，最后做清理和收尾。</p>
+<h2 id="3-2-场景表示"><a href="#3-2-场景表示" class="headerlink" title="3.2 场景表示"></a>3.2 场景表示</h2><p>场景类负责存储几何图元（几何体 + 材质）和光源，处理光线相交的事情。光源存放在唯一的一个列表里，而几何图元以加速结构放在一个特殊实现的图元里（类似 Ray Tracing in One Weekend 的做法）。另外有一个放所有 BB 的变量，也在构造函数里初始化。光源可能需要预处理来优化效果或者性能。“相交”基于不同的需求（有解或求解）有多个实现，按需求返回相交记录或布尔值。</p>
+<h2 id="3-3-积分器接口和-SampleIntegrator"><a href="#3-3-积分器接口和-SampleIntegrator" class="headerlink" title="3.3 积分器接口和 SampleIntegrator"></a>3.3 积分器接口和 <code>SampleIntegrator</code></h2><p>渲染就是做积分。</p>
+<p><code>Integrator</code> 提供了 <code>Render()</code> 函数，接收一个场景的引用，返回场景画面，或者场景光照某些方面的测度。</p>
+<p>接下来讲两个东西：继承自 <code>Integrator</code> 的 <code>SampleIntegrator</code> 和实现它的 <code>WhittedIntegrator</code>。<code>SampleIntegrator</code> 通过 <code>Sampler</code> 提供的流来做渲染。每个采样确定了目标图片上的一个点，然后积分器通过相关的信息做渲染。</p>
+<p><code>SampleIntegrator</code> 的成员变量是一个采样器和一个相机，成员函数有预处理、渲染以及光照相关的函数。渲染和求 radiance 的函数是必须实现的。</p>
+<p>采样器对渲染质量的影响很大，它负责选择向成像面的哪一点投射光线，也为积分器求解渲染方程提供合适的采样点（从随机选择到特殊分布）。</p>
+<p>相机记录观察者的位置、朝向、视场、光圈等信息，内部的胶卷成员则存储并输出成像图片。</p>
+<p>积分器一般被 <code>RenderOptions::MakeIntegrator</code> 生成，后者被 <code>pbrtWorldEnd()</code> 调用，而这个函数又是在场景设置结束之后被调用的。</p>
+<h2 id="3-4-主要的渲染循环"><a href="#3-4-主要的渲染循环" class="headerlink" title="3.4 主要的渲染循环"></a>3.4 主要的渲染循环</h2><p><code>Render()</code> 函数在场景和积分器都设置好之后被调用。</p>
+<p><code>SamplerIntegrator</code> 实现的 <code>Render()</code> 对每个需要渲染的位置使用 <code>Camera</code> 和 <code>Sampler</code> 向场景投射一条光线，传给 <code>Li()</code> 计算 radiance，存放到 <code>Film</code> 里面。以下为关系图。</p>
+<p><img src="/blog/2022/04/08/pbr-book-01/01relationship_around_render.svg" alt="数据流"></p>
+<p>这里有一段代码实现，流程是先根据 tileSize 计算出用来并行的图块数量，然后对于每个图块都生成一个采样器，对每个图块范围内的像素计算 radiance。</p>
+<p>确定图块数量依赖于整幅图像的尺寸和每个图块的开销。图块数量期望是“稍多于”处理器核数，理由是充分利用提前完成任务（比如分到了简单场景）的部分核。当然也要平衡并行数增大所带来的开销。pbrt 使用固定 16*16 大小的图块，这在渲染低分辨率图像时会比较慢，但毕竟都是低分辨率了。这里有一些取整和边界之类的细节要注意。</p>
+<p>分解好的图块会以坐标的形式描述，实现并行执行的函数根据传入的匿名函数和图块的总数来并行渲染每个图块。这里是一个一维和二维之间的坐标转换，匿名函数拿到的是一个图块序号，在内部转换成对应图块的坐标。</p>
+<p>在计算 radiance 的时候，<code>Li()</code> 会相当频繁地申请内存，通用的 <code>malloc()</code> 和 <code>new</code> 对于这些简单专用的内存效率不高，我们使用内存池来解决这个问题。为了避免并发访问等额外问题，我们对每个图块单独维护一个 <code>MemoryArena</code> 内存池。</p>
+<p>每个图块的位置对采样也有一定影响，所以渲染图块使用的采样器也是图块独立的，这也避免了一些并行问题。<code>Sampler</code> 拥有一个 <code>Clone(int)</code> 函数，接收一个伪随机数种子，<em>期望</em>能使用这个种子生成更好的随机化效果。也可能根本不使用，对每个图块都采取一样的行为。采样器最终会被传给 <code>Li()</code> 函数。</p>
+<p>图块边界被用来从胶卷上抠出来一个小胶卷块。胶卷块维护对应图块的像素值，把这些图块像素与其他的线程隔离。渲染结束之后，这个胶卷块会被写回胶卷，然后对图形进行并行更新。</p>
+<p>图块包含的 256 个像素一般用普通的遍历去挨个渲染，采样器对每个像素生成一个或多个采样，用于生成光线。这部分的代码抽象程度比较高，有一点类似迭代器的操作。</p>
+<p>采样器根据像素生成一个相机采样，传给相机来生成一个 ray differential，它包含了“邻近”光线的信息，在材质反走样上会比较有用。<code>Camera</code> 假设光线是间距一个像素的，所以生成的 ray differential 需要根据 spp 再调整一下（见 2.5 节最后）。生成 ray differential 的同时会得到一个光线权重，这个参数在使用透镜组的相机对象里比较重要。</p>
+<p>这里有一个小细节：光线权重的变量类型是 <code>Float</code>。pbrt 会根据不同的机器来采用 <code>float</code> 或者 <code>double</code>。</p>
+<p>接下来是确定光线的 radiance。纯虚函数 <code>virtual Spectrum Li(const RayDifferential&amp; ray, const Scene&amp; scene, Sampler&amp; sampler, MemoryArena&amp; arena, int depth = 0) const = 0</code> 接收 5 个参数：</p>
+<ul>
+<li><code>ray</code>：要计算的入射 radiance 是沿此条光线的</li>
+<li><code>scene</code>：整个场景，用于查询几何和光源</li>
+<li><code>sampler</code>：用于通过蒙特卡洛积分求解光线传播方程的采样器</li>
+<li><code>arena</code>：内存池，里面的空间用于快速复用</li>
+<li><code>depth</code>：光线弹射次数，默认参数</li>
+</ul>
+<p><code>Li()</code> 返回一个 <code>Spectrum</code> 类型变量，记录入射 radiance。为了避免数值异常，还要做一些 nan、无穷大、负数和小量的检查。</p>
+<p>之后就是把这个采样的结果加入到胶卷块里面，重置内存池，计算下一个采样。图块内所有的采样都结束之后，就可以把胶卷块整合到胶卷里。这里有用到一个标准库函数 <code>std::move()</code>，它的作用是转移 <code>unique_ptr</code> 的所有权，实际上是把一个左值转换为右值（同时清空原来指向的对象）。</p>
+<!-- 此处要查：智能指针和move、拷贝 -->
+<p>所有的图块都结束渲染之后，相机对象把自己的胶卷写到文件里去。</p>
+<h2 id="3-5-Whitted-光追积分器-WhittedIntegrator"><a href="#3-5-Whitted-光追积分器-WhittedIntegrator" class="headerlink" title="3.5 Whitted 光追积分器 WhittedIntegrator"></a>3.5 Whitted 光追积分器 <code>WhittedIntegrator</code></h2><p>第 14 和 15 章会介绍许多积分器，这里先看一个经典的 Whitted 光追。Whitted 的算法可以精确处理光滑物体的反射和透射，但不能处理<em>其他种类的间接光照</em>。</p>
+<p>Whitted 积分器求 radiance 的方式，是沿反射和透射的光线不断递归，直到超过设定的最大深度。为此它除了从 <code>SamplerIntegrator</code> 继承来的相机和采样器，还需要一个成员变量 <code>maxDepth</code>。数据流如下：</p>
+<p><img src="/blog/2022/04/08/pbr-book-01/02relationship_around_Li.svg" alt="围绕 `Li` 的数据流"></p>
+<!-- 以下不确定，需要后续代码实现 -->
+<p><code>Li()</code> 拿光线去场景里查询交互（一般是光线和物体相交），然后用和交互记录相应的 B<em>S</em>DF 结合采样器去计算场景的光照。具体来看，它首先去找相交，如果这条光线没有和物体相交，就只去查光线和场景光源的相交并累计 radiance；如果有相交，就用交点的信息计算 BSDF，（如果交点发光）加上光源贡献，再采样计算场景内其他光源的贡献（注意检查相交）。至此，直接光照的计算就结束了。如果还没有到达递归深度，就递归计算镜面物体反射（反射向量）和透射（斯涅尔定律）。</p>
+<p>这里有些 ray differential 相关的、纯粹从数学模型翻译过来的代码。这些模型的结构还不太清楚，看到后面的时候再回来检查一下。</p>
+<!-- 以上不确定，需要后续代码实现 -->
+<h1 id="4-pbrt-的并行"><a href="#4-pbrt-的并行" class="headerlink" title="4 pbrt 的并行"></a>4 pbrt 的并行</h1><!-- 需要看附录 A.6 -->
+<p><strong><em>多核并行是大势所趋。</em></strong></p>
+<p>这里提到了海姆达尔定律，一个非常简单而符合直觉的方程，可以用来计算部分性能提升对于整体的影响。CSAPP 上也提到过。</p>
+<h2 id="4-1-数据竞争和协调"><a href="#4-1-数据竞争和协调" class="headerlink" title="4.1 数据竞争和协调"></a>4.1 数据竞争和协调</h2><p>pbrt 假设运行程序的处理器提供连续共享内存（coherent shared memory），连续内存的特点是所有线程都拥有读写权限，而且做出的改动对其他线程可见。理论上的线程通信一般只限于用简单的信号量等信息来控制同步，不涉及复杂消息的交换。而书这里提到的线程通信类似于 IPC 里面的共享内存通信，没有做那么明显的区分，但还是要注意同步问题。</p>
+<p>解决同步问题的两个主要机制是“互斥”和“原子操作”。pbrt 使用标准库提供的互斥锁，用起来像下面这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// shared variable</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">int</span> globalCounter;</span><br><span class="line"><span class="comment">// a mutex</span></span><br><span class="line"><span class="keyword">extern</span> std::mutex globalCounterMutex;</span><br><span class="line"><span class="comment">// acquire a lock, no need to specify thing to be locked</span></span><br><span class="line"><span class="comment">// use a scope to implicitly release</span></span><br><span class="line">&#123; <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(globalCounterMutex)</span></span>;</span><br><span class="line">  <span class="comment">// do the operations</span></span><br><span class="line">  <span class="type">int</span> temp = globalCounter;</span><br><span class="line">  temp = temp - <span class="number">1</span>;</span><br><span class="line">  globalCounter = temp;</span><br><span class="line">  <span class="keyword">if</span> (globalCounter == <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;done!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原子操作是数据库里经常有的概念，表示一个不可分、只能有“完成”或“不完成”两种结果的操作。pbrt 使用的原子操作来自 C++11 的标准库：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// special type overloading basic arithmetics</span></span><br><span class="line"><span class="keyword">extern</span> std::atomic&lt;<span class="type">int</span>&gt; globalCounter;</span><br><span class="line"><span class="keyword">if</span> (--globalCounter == <span class="number">0</span>)</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;done!\n&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>上面两段代码的行为应该是一样的，都只会有一行打印，如果有两个线程并行的话，<code>globalCounter</code> 最后的值会是 -1。</p>
+<p>第三种方法是 transactional memory，它允许把多个写入做成一个原子操作，在涉及到的内存没有被其他线程访问时一起提交，否则就一起回滚并等待再次尝试。这个方法避免了原子操作过分细致的粒度和互斥锁的高负载，但是硬件支持（在写这本书时，2018 年？）还不完善。</p>
+<p>附录 A.6 会对并行编程做更详细的介绍。我可能等全书看完后或者实现到并行功能时再来更新。</p>
+<h2 id="4-2-惯例"><a href="#4-2-惯例" class="headerlink" title="4.2 惯例"></a>4.2 惯例</h2><p>并行和同步的最大隐患就是程序员。pbrt 读取场景文件和建立场景的阶段是单线程的，没有同步问题，而渲染阶段的大部分数据，都被设置为只读，数据的流向比较单一，也不用担心同步。需要注意的只有写入操作，尤其是在共享内存写入，一定要有合适的同步策略。</p>
+<h2 id="4-3-pbrt-对线程安全的要求"><a href="#4-3-pbrt-对线程安全的要求" class="headerlink" title="4.3 pbrt 对线程安全的要求"></a>4.3 pbrt 对线程安全的要求</h2><ul>
+<li>修改共享内存的函数必须做同步</li>
+<li>基础和底层的类和结构，由于性能需要或单进程特性，一般不要求线程安全</li>
+<li>随机数和内存池之类的功能类，由于性能需要，在每个进程都有独立的实例</li>
+</ul>
+<p>其他<a href="#3-渲染器-pbrt-概览">表格里列出的抽象类</a>的实现，都要求线程安全，除了以下两个例外：</p>
+<p>采样积分器和光源的 <code>Preprocess()</code>函数，由于需要实现一些数据结构，一般假定是单线程运行。</p>
+<p>采样器也不要求线程安全，因为在多次重复执行的条件下，线程安全的需求会拉低性能，不如在每个线程里都实例化一个独立的采样器。</p>
+<p>独立的函数，只要不接收相同的指针，都线程安全的。</p>
+<h1 id="5-如何看这本书"><a href="#5-如何看这本书" class="headerlink" title="5 如何看这本书"></a>5 如何看这本书</h1><p>作者预设的阅读顺序是从前向后，先是向量、光线、光谱这些基础类型，以及基本的渲染循环，然后是各个模块更细节的实现。</p>
+<p>后续的章节主要分为四个部分：</p>
+<ol>
+<li>2-4 章介绍整个系统主要的几何功能<ol>
+<li>第 2 章：点、光线等底层类</li>
+<li>第 3 章：<code>Shape</code> 接口和光线求交</li>
+<li>第 4 章：加速结构</li>
+</ol>
+</li>
+<li>5-7 章介绍图像格式处理<ol>
+<li>第 5 章：描述光的物理单元和光谱类</li>
+<li>第 6 章：相机接口</li>
+<li>第 7 章：采样器</li>
+</ol>
+</li>
+<li>8-12 章介绍材质、纹理以及光线交互<ol>
+<li>第 8 章：定义表面反射的基础类</li>
+<li>第 9 章：材质</li>
+<li>第 10 章：纹理</li>
+<li>第 11 章：光线在参与介质中的行为</li>
+<li>第 12 章：光源接口和若干种光源的实现</li>
+</ol>
+</li>
+<li>13-16 章介绍了蒙特卡洛积分以及基于它的一众积分器</li>
+<li>17 章总结了若干系统设计的决定以及拓展系统的建议；附录包括一些功能函数和解析场景文件的细节。</li>
+</ol>
+<h2 id="5-1-练习"><a href="#5-1-练习" class="headerlink" title="5.1 练习"></a>5.1 练习</h2><p>每章的最后是练习题，分为三种难度：</p>
+<ol>
+<li>花费一两个小时的习题</li>
+<li>花费 10 到 20 小时的课程任务</li>
+<li>花费 40 小时以上的课程项目</li>
+</ol>
+<h1 id="6-Show-Me-the-Code"><a href="#6-Show-Me-the-Code" class="headerlink" title="6 Show Me the Code"></a>6 Show Me the Code</h1><p>为了保证移植性和可读性，多继承、运行时异常和过多的 C++11、C++14 特性都不会出现，C++ 外部标准库也尽可能少使用。短的重复性代码（比如 <code>case</code>）偶尔会被省略。</p>
+<p>我实现时会考虑引入一些 C++ 特性，顺带踩踩坑，因为不想硬背八股。</p>
+<h2 id="6-1-指针-vs-引用"><a href="#6-1-指针-vs-引用" class="headerlink" title="6.1 指针 vs 引用"></a>6.1 指针 vs 引用</h2><p>传参时，如果参数会被函数完全改变，就使用指针，部分或内部改变则使用引用，完全不被改变则使用常引用。例外是：当要表示参数不可用或者不该被使用时，传递一个 <code>nullptr</code>。</p>
+<h2 id="6-2-抽象-vs-效率"><a href="#6-2-抽象-vs-效率" class="headerlink" title="6.2 抽象 vs 效率"></a>6.2 抽象 vs 效率</h2><p>设计类的时候总要在暴露程度上做一些取舍。用 getter 和 setter 把所有成员都抽象出来会不必要地掩盖类的属性，暴露所有成员显然不利于代码维护。</p>
+<p>做这些设计权衡的最终依据是系统的规模。pbrt 的核心部分只有不到 20k 行代码，而且不会暴涨到数百万行，添加新的系统功能也只需要实现各个抽象基类，所以不需要设计太多的抽象接口。</p>
+<h2 id="6-3-代码优化"><a href="#6-3-代码优化" class="headerlink" title="6.3 代码优化"></a>6.3 代码优化</h2><p>相较于代码层面的优化，pbrt 在设计时更倾向于使用高效的算法。然而还是有一些最消耗性能的地方采用了不影响阅读的代码优化。主要的原则是：</p>
+<ul>
+<li>在目前的 CPU 架构上最耗时的运算是除法、开方和三角函数，所以要通过数学变形减少这些运算。</li>
+<li>CPU 的处理速度比数据速率更快。附录 A.4 讨论了提高内存效率的编程原则，并且被运用在第 4 章和第 10 章的图像纹理映射部分。时刻注意编写内存友好的代码。</li>
+</ul>
+<h2 id="6-4-本书网站"><a href="#6-4-本书网站" class="headerlink" title="6.4 本书网站"></a>6.4 本书网站</h2><p><a target="_blank" rel="noopener" href="https://pbrt.org/">官网</a>，有涉及 pbrt 的所有资源和勘误、漏洞报告。</p>
+<h2 id="6-5-系统拓展"><a href="#6-5-系统拓展" class="headerlink" title="6.5 系统拓展"></a>6.5 系统拓展</h2><p>pbrt 的设计目标之一就是可扩展性。附录 A.4 和附录 B 介绍了添加新功能的方法。</p>
+<h2 id="6-6-漏洞"><a href="#6-6-漏洞" class="headerlink" title="6.6 漏洞"></a>6.6 漏洞</h2><p>发现，复现，查询，讨论，提交，解决。</p>
+<h1 id="7-PBR-简史"><a href="#7-PBR-简史" class="headerlink" title="7 PBR 简史"></a>7 PBR 简史</h1><p>哦，快乐的听故事时间。</p>
+<p>上世纪七十年代的计算机图形学主要致力于解决可视性算法、几何表示等基础问题。当时的存储和算力都非常昂贵，图形学内容的复杂度也受到了限制，以至于任何精确模拟渲染物理的方案都不可行。</p>
+<p>随着计算机的性能提高、价格降低，我们得以在渲染时使用对计算有更高要求的方案，这也让基于物理的方案变得切实可行。这样的进展可以用 Blinn’s law 描述：“科技飞速发展，但渲染时间不变”。</p>
+<p>Jim Blinn 的描述指出了一个重要的约束：对于给定数量的渲染图像，只能用固定的时间去渲染每张图。计算量固定，用时固定，那么每张图片的最大计算量也是有限的。（这句不太明白，但理解上就是渲染时间不能毫无限制。）</p>
+<p>Blinn’s law 也表现了这样的一个观察结果：人们想渲染的图像和能渲染的图像总有差距，艺术家和算法设计者们总能吃掉计算机发展带来的算力。</p>
+<h2 id="7-1-学术"><a href="#7-1-学术" class="headerlink" title="7.1 学术"></a>7.1 学术</h2><p>图形学研究人员在二十世纪八十年代开始认真考虑基于物理的渲染。Whitted 的论文 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Whitted80">1980</a>) 介绍了利用光线追踪处理全局光照的想法，为精确模拟场景中光线分布打开了一扇门。他渲染出的“前所未见”的图像，激起了学术圈对这种方法的热情。</p>
+<p>Cook 和 Torrance 的反射模型 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Cook81">1981</a>, <a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Cook82">1982</a>) 是 PBR 方向另一个值得注意的早期进展，引入了微表面反射模型。在其他的贡献中，他们提出准确利用微表面反射建模可以精确地渲染金属表面，学术界在此之前都不能很好地解决这个问题。</p>
+<p>不久之后，Goral et al. (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Goral1984">1984</a>) 将传热理论和渲染联系起来，提出了使用基于物理的光传播近似来表现全局漫反射效果，基础是有限元分析，认为场景中的表面都在互相交换能量。这个方法后来被以一个相关的物理单位命名为“辐射度”。Cohen 和 Greenberg (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Cohen1985">1985</a>)，以及 Nishita 和 Nakamae (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Nishita1985">1985</a>) 在这个方向做了更多的推进。基于物理的方法再一次渲染出了前所未见的光效，让许多研究人员在这个领域追求进步。</p>
+<p>辐射度方法严格基于物理单位和能量守恒，但随着时间推移，人们发现它没有引出切实可行的渲染算法：渐近的时间复杂度高达 $O(n^2)$，而且需要将几何模型沿着阴影边界重新细分才能得到好的结果，但提出足够健壮和高效的细分算法非常困难，所以辐射度的实际应用就被限制了。</p>
+<p>在学界为辐射度着迷的年代，一小群研究人员致力于基于光线追踪和蒙特卡洛积分的 PBR。他们的工作一度受到许多怀疑，因为蒙特卡洛积分的不一致性造成的噪点似乎很难避免，而基于辐射度的方法，至少在简单场景下能做到又快又好的渲染。</p>
+<p>1984 年，Cook，Porter 和 Carpenter 提出了分布式光线追踪，把 Whitted 的算法推广到从相机计算运动模糊和焦散模糊、从光亮表面计算模糊反射，以及从面光源计算光照 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Cook84">1984</a>)，展示出光线追踪处理许多重要光效的能力。</p>
+<p>两年之后，Kajiya (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Kajiya86">1986</a>) 提出了路径追踪。他对渲染问题建立了一个严谨的方程（光传播积分等式）并且展示了利用蒙特卡洛积分求解的方法。这个方法需要大量的计算：渲染一张 $256\times 256$ 的两个球体图像需要一台 IBM 4341 计算机（发行售价280,000刀）工作 7 个小时 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Farmer1981">1981</a>)。Kajiya 和 von Herzen 共同提出了体渲染方程 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Kajiya84">1984</a>)，这个方程严谨地描述了光在参与介质中的散射。</p>
+<p>Cook et al. 和 Kajiya 的工作都渲染出了前所未见的图像，说明基于物理方法的价值不容小觑。后续的几年间，利用蒙特卡洛进行真实感图像合成的工作层出不穷。书上这里罗列了很多重要的文献和书籍。</p>
+<p>PBR 关键的一步是 Veach 的工作 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:VeachThesis">1997</a>)，他发展了蒙特卡洛渲染的关键理论基础，提出多权重采样、双向路径追踪等新算法，以及效率极大提高的 Metropolis 光传播。以 Blinn’s law 为导向，我们相信效率方面重要的进展对这些方法的实际应用至关重要。</p>
+<p>大约在二十世纪末，随着计算机性能和并行度的提高，一众研究人员开始追求实时的光线追踪。Wald et al. 提出了一个高度优化后的光线追踪器 (<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading.html#cite:Wald01b">2001b</a>)，后续许多工作开始往这个方向卷。尽管有很多不是基于物理的，这些工作也推动了加速结构和几何组件的发展，也让更复杂场景的 PBR 变得可能。</p>
+<h2 id="7-2-工业"><a href="#7-2-工业" class="headerlink" title="7.2 工业"></a>7.2 工业</h2><p>二十世纪八十年代，计算机性能越来越强，图形学也渐渐被应用到动画和电影制作方面，但是最初仍然只有对算力和内存要求不高的光栅化模型。光栅化方法在内存占用上优于光线追踪，因为它并不需要在内存里时刻维护整个场景。</p>
+<p>同时，甚至有许多从业者认为物理正确的渲染没什么必要，因为图形学在那时主要被用来实现无法通过物理手段达到的效果，比如照在人身上比照在背景上更亮的光源。</p>
+<p>到二十世纪末，首先在实践中采用基于物理方法的，是那些试图在实拍的场景中加入渲染效果的特效师。Blue Sky Studio 开发了一套基于物理的渲染管线，制作出的作品（例如 1998 年的 Bunny）依然是“前所未见”的，可惜相关的技术细节没有公开。</p>
+<p>二十一世纪初，许多工作室使用 mental ray 系统来制作视觉效果。这是一套精妙复杂的全局光照渲染系统，但主要用于产品设计，因此没有影视行业关心的复杂场景和大量贴图处理。</p>
+<p>随后是 2001 年 Marcos Fajardo 在 SIGGRAPH 上发表 Arnold 渲染器的早期版本。它基于蒙特卡洛方法，可以在几十分钟内渲染出包含复杂几何、材质和全局光照的图像。这个成果的效率还不能胜任当时的电影制作，但是展示出了许多创新点。</p>
+<p>索尼在 Fajardo 的 Arnold 基础上开发出了一套产品化的 PBR 系统，致力于高效的运动模糊、可编程着色、复杂场景和场景几何延迟加载，以及纹理缓存等重要问题。</p>
+<p>随后是皮克斯的 RenderMan 渲染器。它支持混合光栅化和全新的复杂场景全局光照算法，随后在 pbrt 的架构下被重构成基于物理的 ray tracer。</p>
+<p>诸多基于蒙特卡洛方法的 PBR 之所以在生产领域取得成功，是因为它们提高了艺术家的生产效率。以下是一些关键因素：</p>
+<ul>
+<li>“傻瓜化”的算法通过调整 spp 就可以在渲染质量和时间之间做取舍，即适合快速预览中间结果，也适合精细制作最终成品，这相比于光栅化有很大进步。</li>
+<li>在基于物理的模型下设计表面材质更加简单，而以前的反射模型由于不保证能量守恒，经常需要设置很不合理的参数，而且不能在其他光照下表现一致。</li>
+<li>阴影，尤其是软阴影，在光线追踪下更加真实，而之前的模型还需要阴影贴图等等参数。光线弹跳和柔光效果也可以由算法保证，而非艺术家手调。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/Introduction/Further_Reading#">深度阅读</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2022/04/08/pbr-book-01/" title="基于物理的渲染：从理论到实现 01">https://f-jason.site/blog/2022/04/08/pbr-book-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Computer-Graphics/" rel="tag"># Computer Graphics</a>
+              <a href="/blog/tags/pbrt/" rel="tag"># pbrt</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/02/26/slowpt/" rel="prev" title="简单光追渲染器 SlowPT">
+      <i class="fa fa-chevron-left"></i> 简单光追渲染器 SlowPT
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/08/07/slowpt-end/" rel="next" title="SlowPT 总结">
+      SlowPT 总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

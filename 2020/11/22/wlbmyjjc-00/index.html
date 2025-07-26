@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="开始跟着实验室研二的学长学东西。因为线代概统这些课都没学，要搞的还挺多。拿到了一本网络编码的书和一些论文，当然还有补课的一些材料。 在学线性代数，希望能在这两个星期把这本书过一遍，搞清楚网络编码大概的框架。  《网络编码研究基础》ISBN 978-7-115-43562-0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络编码研究基础 00 概览">
+<meta property="og:url" content="https://f-jason.site/blog/2020/11/22/wlbmyjjc-00/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="开始跟着实验室研二的学长学东西。因为线代概统这些课都没学，要搞的还挺多。拿到了一本网络编码的书和一些论文，当然还有补课的一些材料。 在学线性代数，希望能在这两个星期把这本书过一遍，搞清楚网络编码大概的框架。  《网络编码研究基础》ISBN 978-7-115-43562-0">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-22T02:42:52.000Z">
+<meta property="article:modified_time" content="2020-11-22T02:42:52.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Network">
+<meta property="article:tag" content="《网络编码研究基础》">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/11/22/wlbmyjjc-00/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>网络编码研究基础 00 概览 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-%E5%89%8D%E8%A8%80"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%BB%AA%E8%AE%BA"><span class="nav-text">1. 绪论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E8%BD%AC%E5%8F%91%E6%8A%80%E6%9C%AF"><span class="nav-text">几个转发技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81"><span class="nav-text">网络编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9D%B4%E8%9D%B6%E7%BD%91%E7%BB%9C%E6%BC%94%E7%A4%BA%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81"><span class="nav-text">蝴蝶网络演示线性网络编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E5%92%8C%E5%85%B6%E4%BB%96%E7%BC%96%E7%A0%81%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">网络编码和其他编码的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E5%92%8C%E9%9D%9E%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81"><span class="nav-text">线性网络编码和非线性网络编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E5%86%85%E7%BC%96%E7%A0%81%E5%92%8C%E4%BB%A3%E9%97%B4%E7%BC%96%E7%A0%81"><span class="nav-text">代内编码和代间编码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E7%9B%B8%E5%85%B3%E7%90%86%E8%AE%BA%E4%B8%8E%E6%8A%80%E6%9C%AF"><span class="nav-text">2. 相关理论与技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81"><span class="nav-text">3. 线性网络编码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E7%9A%84%E5%AF%BC%E5%87%BA%E4%B8%8E%E6%89%A9%E5%B1%95"><span class="nav-text">4. 线性网络编码的导出与扩展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%9C%AA%E7%9F%A5%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%9C%80%E5%A4%A7%E5%90%9E%E5%90%90%E7%8E%87%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E5%A4%9A%E6%92%AD"><span class="nav-text">5. 未知网络拓扑环境下最大吞吐率的网络编码多播</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%8B%93%E6%89%91%E6%96%B9%E6%A1%88"><span class="nav-text">静态拓扑方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%8B%93%E6%89%91%E6%96%B9%E6%A1%88"><span class="nav-text">动态拓扑方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E4%BC%98%E5%8C%96%E6%9E%84%E9%80%A0%E7%A0%94%E7%A9%B6"><span class="nav-text">6. 网络编码优化构造研究</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E8%BF%90%E7%AE%97%E4%BB%A3%E4%BB%B7%E7%9A%84%E4%BC%B0%E7%AE%97%E4%B8%8E%E5%88%86%E6%9E%90"><span class="nav-text">7. 网络编码运算代价的估算与分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-%E5%9F%BA%E4%BA%8E%E5%88%86%E7%BA%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E7%9A%84%E4%B8%80%E7%A7%8D%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%96%B9%E6%B3%95"><span class="nav-text">8. 基于分级网络编码的一种数据传输方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-%E5%9F%BA%E4%BA%8E%E9%9A%8F%E6%9C%BA%E7%BA%BF%E6%80%A7%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E7%9A%84%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6"><span class="nav-text">9. 基于随机线性网络编码的差错控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%BB%B4%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C"><span class="nav-text">三维奇偶校验</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-%E5%A4%9A%E6%BA%90%E5%A4%9A%E6%92%AD%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E4%BC%98%E5%8C%96%E7%9A%84%E6%9E%84%E9%80%A0%E7%A0%94%E7%A9%B6"><span class="nav-text">10. 多源多播网络编码优化的构造研究</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%BA%90%E5%A4%9A%E5%AE%BF%E5%A4%9A%E6%92%AD"><span class="nav-text">多源多宿多播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E5%A4%9A%E6%BA%90%E5%A4%9A%E6%92%AD"><span class="nav-text">一般多源多播</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/11/22/wlbmyjjc-00/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络编码研究基础 00 概览
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-22 10:42:52" itemprop="dateCreated datePublished" datetime="2020-11-22T10:42:52+08:00">2020-11-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Reading/" itemprop="url" rel="index"><span itemprop="name">Reading</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>开始跟着实验室研二的学长学东西。因为线代概统这些课都没学，要搞的还挺多。拿到了一本网络编码的书和一些论文，当然还有补课的一些材料。</p>
+<p>在学线性代数，希望能在这两个星期把这本书过一遍，搞清楚网络编码大概的框架。</p>
+<blockquote>
+<p>《网络编码研究基础》<br>ISBN 978-7-115-43562-0</p>
+</blockquote>
+<span id="more"></span>
+<blockquote>
+<p>想法、初步的问题以及后续再读时需要详细了解的点，将通过引用框的形式列出，</p>
+</blockquote>
+<p><a href="#0-前言">2020-11-21开始</a></p>
+<p><a href="#4-线性网络编码的导出与扩展">2020-11-28开始</a></p>
+<p><a href="#8-基于分级网络编码的一种数据传输方法">2020-12-02开始</a></p>
+<h1 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h1><p>数据在网络中通过拆分成包进行传输，路由结点可以将接收到的数据原样转发出去，也可以<strong>编码</strong>后再转发。牺牲一部分算力用于编解码，可以通过提高网络吞吐率、健壮性、安全性来提升传输性能，同时实现网络均衡。显然一个好的编码方案要关注的也是这几个方面。</p>
+<p>编码是信息从一种形式转换到另一种形式的映射过程。</p>
+<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1. 绪论"></a>1. 绪论</h1><h2 id="几个转发技术"><a href="#几个转发技术" class="headerlink" title="几个转发技术"></a>几个转发技术</h2><ul>
+<li>单播：一对一传输</li>
+<li>广播：单源点向所有其他点发送数据</li>
+<li>多播（组播）：单源点向特定多个点，或多源点向特定多个点发送</li>
+</ul>
+<blockquote>
+<p>各自的优缺点？</p>
+</blockquote>
+<p>多播和人的社会互动形式最接近。</p>
+<h2 id="网络编码"><a href="#网络编码" class="headerlink" title="网络编码"></a>网络编码</h2><p>一种数据传输技术，中间结点可以选择直接转发经手的数据，或进行编码后再转发。</p>
+<blockquote>
+<p>路由是一种特殊的网络编码？</p>
+</blockquote>
+<p>主要相关学科：计算机网络、信息论、图论、线性代数。</p>
+<blockquote>
+<p>新的方案有必要兼容现在通用的网络结构，或者提供尽可能小的转换成本。</p>
+</blockquote>
+<p>信息传输速率的瓶颈显然是整个路径中最慢的一个/几个环节。数据在网络中多播传输的路径是树或森林（多源点），构造这样的树是 NP 问题。</p>
+<blockquote>
+<p>NP 还是 NPC？</p>
+</blockquote>
+<p>线性网络编码通过将结点接收的信息进行线性组合后再转发，编码方式可以通过向量代数的理论进行证明。</p>
+<blockquote>
+<p>当接收带宽大于发送带宽时，可以考虑的一种方法是各节点将接收的数据压缩后转发，传出的数据大小减小，信息不变（无损压缩时）。线性网络编码是这样的一种“压缩”技术吗？这似乎不符合流的守恒（流出 = 流入）</p>
+</blockquote>
+<h2 id="蝴蝶网络演示线性网络编码"><a href="#蝴蝶网络演示线性网络编码" class="headerlink" title="蝴蝶网络演示线性网络编码"></a>蝴蝶网络演示线性网络编码</h2><p>蝴蝶网络是一个 有向 无环 单源 多播 网。每个多播的宿点都收到了同样的数据，则宿点可以接收这样的一种包：它的大小与正常的包一样，但是可以根据宿点拥有的信息进行“补全”。牺牲宿点的算力，收益是部分信道可以只发送固定内容的包，而不是分片依次发送，这样可以提高传递信息的效率。</p>
+<blockquote>
+<p>直接拿到信息所用的时间中，有一部分被分摊到了编解码上。传递的效率确实提升了，问题是宿点“获得”信息的效率是否提升。</p>
+<p>网络编码传输的优点基本是构造最优传输时所追求的那几点，缺点是算力要求（属于边缘计算？），传输编解码策略实际上也需要占用带宽（通过写进协议等方法预置？安全性？）</p>
+</blockquote>
+<h2 id="网络编码和其他编码的区别"><a href="#网络编码和其他编码的区别" class="headerlink" title="网络编码和其他编码的区别"></a>网络编码和其他编码的区别</h2><ul>
+<li>信源编码：压缩信息再传输</li>
+<li>信道编码：降低噪声干扰？</li>
+<li>加解密：防窃听</li>
+</ul>
+<p>以上三种基本不在中间结点改动数据。</p>
+<h2 id="线性网络编码和非线性网络编码"><a href="#线性网络编码和非线性网络编码" class="headerlink" title="线性网络编码和非线性网络编码"></a>线性网络编码和非线性网络编码</h2><p>定义一个信息集合，编码运算对它应该是封闭的。有限域比较符合。</p>
+<blockquote>
+<p>否则解码规则不能正确识别？或者对封闭系统的研究比较成熟？</p>
+</blockquote>
+<p>存在从线性编码网络构造非线性编码网络的方法。</p>
+<blockquote>
+<p>线性编码比非线性好算。</p>
+</blockquote>
+<h2 id="代内编码和代间编码"><a href="#代内编码和代间编码" class="headerlink" title="代内编码和代间编码"></a>代内编码和代间编码</h2><p>一个数据块的信息从源点传输到宿点并完成解码的过程称为一代。代内编码只会包含当前块的数据，代间编码还会包含向前若干代的数据。一代解码失败时（数据损坏），代内编码需要重传该代信息，代间编码只要传递该代的部分信息。</p>
+<blockquote>
+<p>一种冗余？包含前几代的编码块一定比代内小？“部分”信息如何从该代确定并拆分出来？期间的效率？</p>
+</blockquote>
+<h1 id="2-相关理论与技术"><a href="#2-相关理论与技术" class="headerlink" title="2. 相关理论与技术"></a>2. 相关理论与技术</h1><p>多播连接：一个过程，过程中源点同时传输数据至所有宿点。基于网络编码的多播连接要求一个有向图，图中源点到任意宿点的最小割不小于多播率。</p>
+<p>同步方式传输：每个结点接收全部输入信道的信息后才开始编码转发。</p>
+<p>多播容量：同步传输时，各宿点能同时完整正确接收信息的前提下，源点的最大发送速度，即最大流。</p>
+<p>多播率：实际发送速率。</p>
+<p>最大流最小割定理：最大流等于最小割。</p>
+<p>图论内容和运筹学（优化理论）内容。随机化搜索。</p>
+<p>有限域及其运算。离散和线代内容。</p>
+<p>验证方法：仿真测试。几个生成测试网络的算法和作者的改进。</p>
+<h1 id="3-线性网络编码"><a href="#3-线性网络编码" class="headerlink" title="3. 线性网络编码"></a>3. 线性网络编码</h1><p>结点将输入数据线性组合后发出。组合在字符集上封闭。</p>
+<blockquote>
+<p>数学表达以及归纳证明，线性代数内容。 $GF(2^m)$</p>
+</blockquote>
+<p>传输多字符时模型的修改。</p>
+<p>构造网络编码方案的目的：确定各结点的编码方式、宿点的解码方式。</p>
+<p>对于已知拓扑结构的单源多播网络，可以确定构造网络编码，通过矩阵运算解码。</p>
+<p>结构未知或变动大时，还要利用信道传输相应的全局编码向量。数学上宿点有概率不能解码，通过调整有限域的阶来降低这个概率。</p>
+<p>随机性网络编码和确定性网络编码的传输方法。</p>
+<p>仿真实现：Windows 套接字编程函数。确定性和随机性编码的代码。</p>
+<blockquote>
+<p>Python 行不行？相关的库？</p>
+<p>感性地理解，网络编码是在数据传输过程中应用的一种融合技术，通过将待转发的信息“融合”在一起，提高结点一次转发中包含的信息量，因此“压缩”不是必要的效果。编码方案就是“融合”和“拆分”的策略，构造编码方案涉及图论、线性代数等知识。</p>
+</blockquote>
+<h1 id="4-线性网络编码的导出与扩展"><a href="#4-线性网络编码的导出与扩展" class="headerlink" title="4. 线性网络编码的导出与扩展"></a>4. 线性网络编码的导出与扩展</h1><p>已知网络拓扑可以先求出多播率和编码系数再传输，未知时要用 Random Network Coding。</p>
+<p>实际应用中的几个问题：</p>
+<ul>
+<li>同一单源多播网络，每代的多播率需要变化，增加了计算量，保存每个多播率下的编码系数也需要空间</li>
+<li>有<strong>分布式计算最小编码信道数的方法</strong>（启发式和 RNC 结合），但也只能求信道数而不能构造方案，且需要给定一个可行的多播率</li>
+<li>部分文献和方法假定了多播率已知</li>
+</ul>
+<blockquote>
+<p>现行的多播方案是如何确定多播率的？路由器的工作原理？</p>
+</blockquote>
+<p>多播率应该尽量大（逼近/达到多播容量），以提高吞吐率。需要动态测试多播容量。</p>
+<p>编码方案的导出和扩展技术：给定多播率和对应编码方案，可<strong>确定</strong>求出较大多播率和较小多播率的方案。</p>
+<blockquote>
+<p>所以有未知拓扑下无假设地求出总体/局部多播率的方案吗</p>
+</blockquote>
+<p>导出的较小多播方案类似于矩阵截断，取前缀。</p>
+<blockquote>
+<p>几个证明，后面补上。</p>
+</blockquote>
+<p>所以，多播率减小时只需要截取原来的矩阵即可得到新的适用矩阵。</p>
+<p>导出较大的多播方案，<strong>定理 4.5</strong>。一个 $O(n^2)$ 的算法。</p>
+<p>仿真测试部分。</p>
+<blockquote>
+<p>成功测得多播容量的概率如何计算，在任何网络拓扑下都可以接受吗？<br>参考文献有点老？</p>
+</blockquote>
+<h1 id="5-未知网络拓扑环境下最大吞吐率的网络编码多播"><a href="#5-未知网络拓扑环境下最大吞吐率的网络编码多播" class="headerlink" title="5. 未知网络拓扑环境下最大吞吐率的网络编码多播"></a>5. 未知网络拓扑环境下最大吞吐率的网络编码多播</h1><p>全局网络拓扑对源点不可知，宿点可以向源点反馈信息的网络，结点有足够算力和存储空间。分静态和动态网络拓扑讨论。</p>
+<blockquote>
+<p>反馈时也属于通信过程，这里如何编码？</p>
+</blockquote>
+<p>对于静态：源点随机试播，根据反馈信息调整。对于动态：传输数据时通过反馈来动态测试多播容量并调整多播率。</p>
+<blockquote>
+<p>听起来不够健壮。</p>
+</blockquote>
+<h2 id="静态拓扑方案"><a href="#静态拓扑方案" class="headerlink" title="静态拓扑方案"></a>静态拓扑方案</h2><p>蒙特卡罗方法试播， 当一定次数或临时容量比较稳定后停止，源点计算编码方案并广播多播率，宿点计算逆矩阵。</p>
+<blockquote>
+<p>传输延时可能很高</p>
+</blockquote>
+<p><strong>有效性分析</strong>和仿真测试。</p>
+<h2 id="动态拓扑方案"><a href="#动态拓扑方案" class="headerlink" title="动态拓扑方案"></a>动态拓扑方案</h2><p>基于重传和变多播率的随机线性网络编码方法（RNC-RVMR）：</p>
+<ul>
+<li>宿点不能解码时，反馈到源点，源点重传</li>
+<li>全局编码向量维数与源点输出信道数相等</li>
+</ul>
+<p>基本思想：同时进行两个多播率的数据传输，一个测试，一个传数据。两者互为导出关系。</p>
+<p>具体实现和证明。</p>
+<p>仿真。</p>
+<h1 id="6-网络编码优化构造研究"><a href="#6-网络编码优化构造研究" class="headerlink" title="6. 网络编码优化构造研究"></a>6. 网络编码优化构造研究</h1><p>参与编码的结点数和信道数对效率有比较大的影响。指定吞吐率下确定最小编码结点数是 NP 问题，使用启发式。</p>
+<p>一个优化方法：分布式测出多播容量，再使用遗传算法分布式构造最少编码信道方案，最后用确定性策略传输。主要手段：减少编码信道数，目的：减少编码代价。</p>
+<blockquote>
+<p>减少编码信道数会不会影响吞吐率？</p>
+</blockquote>
+<p>处理 NP 问题常用启发式搜索。</p>
+<blockquote>
+<p>遗传算法的细节，基因片段存在各结点里。<br>搜索的效率</p>
+</blockquote>
+<p>多播率和结点数互相制约。双目标优化问题。</p>
+<blockquote>
+<p>网络编码的动机就是，在提升多播率的同时，减少传输过程中整个网络的状态需要转移的次数（一般代表各结点的一次转播/接收，这通常代表要消耗的时间）。状态之间的区别是，存在结点，它接收/转发的数据发生了变化。</p>
+</blockquote>
+<h1 id="7-网络编码运算代价的估算与分析"><a href="#7-网络编码运算代价的估算与分析" class="headerlink" title="7. 网络编码运算代价的估算与分析"></a>7. 网络编码运算代价的估算与分析</h1><p>时间复杂度分析和环境影响。</p>
+<p>有限域的除法运算。</p>
+<p>注意到一个结点会参与多个多播。</p>
+<p>硬件电路计算有限域除法比较快，或者查找乘法表。但是两者都随有限域变化，考虑从有限域的代数结构出发。</p>
+<p>以硬件时间为单位，计算加减乘除异或的时间复杂度。</p>
+<p>求逆的复杂度。只考虑了高斯消元法。</p>
+<p>估算整个编码方案的复杂度。</p>
+<p>仿真验证计算结果。</p>
+<h1 id="8-基于分级网络编码的一种数据传输方法"><a href="#8-基于分级网络编码的一种数据传输方法" class="headerlink" title="8. 基于分级网络编码的一种数据传输方法"></a>8. 基于分级网络编码的一种数据传输方法</h1><p>单极网络编码方法：源点播出信息，各结点转发，宿点收到所有信息后解码。</p>
+<ol>
+<li>网络运算延迟不可忽略，且与有限域的次成平方关系，而有限域的阶不能小于宿点个数。</li>
+<li>单级传输的多播率受最小割的限制</li>
+<li>有限域的次只与宿点个数相关？</li>
+</ol>
+<p>基于以上两个事实，减少宿点个数可以降低有限域的阶，而分主干网-子网进行多次解码编码传输可以<strong>将运算量分散</strong>，减少宿点的个数。</p>
+<p>定义 8.1 单源多播网络存在主干网 - 子网结构时，数据在主干与子网的连接点解码，由连接点重新编码多播给其下的宿点。</p>
+<blockquote>
+<p>如何区分主干？依据信道的容量？<br>如果考虑“极致”的分散运算，信息在每个中间结点都重新编解码一遍？</p>
+</blockquote>
+<p>分级多播率优越性证明。</p>
+<blockquote>
+<p>最小割的影响被限制在一个区域（子网/主干网）里</p>
+</blockquote>
+<p>利用多播率在连接点出（可能）产生的变化，可以进行缓存转发（大变小）或“插播”（小变大）。</p>
+<p>仿真</p>
+<blockquote>
+<p>这是需要假设网络拓扑是一棵有根树吗</p>
+</blockquote>
+<h1 id="9-基于随机线性网络编码的差错控制"><a href="#9-基于随机线性网络编码的差错控制" class="headerlink" title="9. 基于随机线性网络编码的差错控制"></a>9. 基于随机线性网络编码的差错控制</h1><p>网络编码的纠错。属于完善部分。</p>
+<blockquote>
+<p>普通传输是如何纠错的？<br>几个名词：前向纠错、海明界（汉明码？）</p>
+</blockquote>
+<p>网络编码的特点，出错可能在传输内容（信息/编码向量）的任一部分，出错的输入信道数据会在编码“压缩”时污染全部输出。</p>
+<p>点-点检错 + 端-端重传，三维奇偶校验和反馈信道</p>
+<h2 id="三维奇偶校验"><a href="#三维奇偶校验" class="headerlink" title="三维奇偶校验"></a>三维奇偶校验</h2><blockquote>
+<p>为什么用三维？校验位更多吗？</p>
+</blockquote>
+<p>信息位构造成一个立方体矩阵，长宽高各增加1，利用多出来的三个相邻的层面记录校验位。生成和检验都是线性时间（$N = (a + 1)(b + 1)(c + 1)$）显然存在需要增加信息位凑成最小立方体的情况。</p>
+<p>不能检出的错误：某个子立方体的八个顶点同时出错。</p>
+<p>计算可知无法检错的概率量级在 $10^{-10}$ 以下。</p>
+<p>如何选择立方体的尺寸。</p>
+<p><strong>有效性证明</strong>和仿真测试。</p>
+<h1 id="10-多源多播网络编码优化的构造研究"><a href="#10-多源多播网络编码优化的构造研究" class="headerlink" title="10. 多源多播网络编码优化的构造研究"></a>10. 多源多播网络编码优化的构造研究</h1><p>多源多播构造编码的方法。</p>
+<p>多源多宿多播（Multi-Source Multi-Sink Multicast）：宿点接收来自所有源点的数据，每个源点对应相同宿点集</p>
+<p>一般多源多播：每个源点对应不同宿点集</p>
+<h2 id="多源多宿多播"><a href="#多源多宿多播" class="headerlink" title="多源多宿多播"></a>多源多宿多播</h2><p>构造一个含约束的单源多播问题（派生问题），证明等价性，将确定各源点多播率的问题转化为背包问题。求出多播率后，在单源多播确定性网络模型下构造编码。</p>
+<p>添加一个根，以各源点为子结点，向它们分发数据。<strong>LIF 算法</strong>。问题是选取一组根向各源点广播数据的容量。组合优化问题。搜索算法。</p>
+<blockquote>
+<p>普通的动态规划可行吗？</p>
+</blockquote>
+<h2 id="一般多源多播"><a href="#一般多源多播" class="headerlink" title="一般多源多播"></a>一般多源多播</h2><p>还没有完全解决。从简单的拓扑结构入手。</p>
+<p>划分子图的方法，各子图的边不重叠，每个子图包含且仅包含一组源点和对应宿点集，则特化成单源多播（多播森林）。数学问题。</p>
+<blockquote>
+<p>从此处开始需要知道全局拓扑？</p>
+</blockquote>
+<p>必须要求得<strong>可达信息率区域</strong>。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/11/22/wlbmyjjc-00/" title="网络编码研究基础 00 概览">https://f-jason.site/blog/2020/11/22/wlbmyjjc-00/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Network/" rel="tag"># Network</a>
+              <a href="/blog/tags/%E3%80%8A%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81%E7%A0%94%E7%A9%B6%E5%9F%BA%E7%A1%80%E3%80%8B/" rel="tag"># 《网络编码研究基础》</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/09/04/tzcxsjjs-02-01/" rel="prev" title="挑战程序设计竞赛 02 章 01">
+      <i class="fa fa-chevron-left"></i> 挑战程序设计竞赛 02 章 01
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/23/tzcxsjjs-02-02/" rel="next" title="挑战程序设计竞赛 02 章 02">
+      挑战程序设计竞赛 02 章 02 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

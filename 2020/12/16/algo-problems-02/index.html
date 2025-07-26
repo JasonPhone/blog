@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-jason.site","root":"/blog/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeIn","post_body":"fadeIn","coll_header":"fadeIn","sidebar":"fadeIn"}}};
+  </script>
+
+  <meta name="description" content="拿到了这周末 ICPC 2020 南京的名额。今天看新生赛打完，榜前几名都很强。就写点题解早点休息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="题解 02">
+<meta property="og:url" content="https://f-jason.site/blog/2020/12/16/algo-problems-02/index.html">
+<meta property="og:site_name" content="Hello World.">
+<meta property="og:description" content="拿到了这周末 ICPC 2020 南京的名额。今天看新生赛打完，榜前几名都很强。就写点题解早点休息。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-16T14:01:40.000Z">
+<meta property="article:modified_time" content="2020-12-16T14:01:40.000Z">
+<meta property="article:author" content="Jason">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://f-jason.site/blog/2020/12/16/algo-problems-02/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>题解 02 | Hello World.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hello World.</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jason's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section">Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section">Tags<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section">Categories<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section">Archives<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#POJ-2236-Wireless-Network"><span class="nav-text">POJ 2236 Wireless Network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1457-C-Bouncing-Ball"><span class="nav-text">CF 1457 C Bouncing Ball</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1295-B-Infinite-Prefixes"><span class="nav-text">CF 1295 B Infinite Prefixes</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1453-C-Triangles"><span class="nav-text">CF 1453 C Triangles</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CF-1453-D-Checkpoints"><span class="nav-text">CF 1453 D Checkpoints</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jason</p>
+  <div class="site-description" itemprop="description">Focused, powerful, graceful.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonphone" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jasonphone" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1755041948@qq.com" title="E-Mail → mailto:1755041948@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://f-jason.site/blog/2020/12/16/algo-problems-02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Jason">
+      <meta itemprop="description" content="Focused, powerful, graceful.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello World.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          题解 02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-16 22:01:40" itemprop="dateCreated datePublished" datetime="2020-12-16T22:01:40+08:00">2020-12-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Cases/" itemprop="url" rel="index"><span itemprop="name">Cases</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>拿到了这周末 ICPC 2020 南京的名额。今天看新生赛打完，榜前几名都很强。就写点题解早点休息。</p>
+<span id="more"></span>
+<h1 id="POJ-2236-Wireless-Network"><a href="#POJ-2236-Wireless-Network" class="headerlink" title="POJ 2236 Wireless Network"></a>POJ 2236 <a target="_blank" rel="noopener" href="http://poj.org/problem?id=2236">Wireless Network</a></h1><blockquote>
+<p>一群通过无线信号交流的电脑，位置固定，序号为 $1$ 到 $n$，交流半径为 $d$，允许中介。两种操作：</p>
+<ol>
+<li>$O\,p$， 将 $p$ 号电脑置为可通信状态</li>
+<li>$S\,p\,q$，检查 $p$ 和 $q$ 两台电脑能否通信</li>
+</ol>
+<p>对于每个 S 操作，输出 “SUCCESS” 当可通信，“FAIL”当不可通信。</p>
+<p>$1\leq n \leq 1001, 0\leq d\leq 10000$<br>操作不超过 $300000$ 次</p>
+</blockquote>
+<p>并查集裸题。开一张表记录修好的点。每读入一个维修操作，遍历所有修好的点，把处于半径内的点都加入同一组；每读入一个查询操作，就查两个点是否在同一组。</p>
+<h1 id="CF-1457-C-Bouncing-Ball"><a href="#CF-1457-C-Bouncing-Ball" class="headerlink" title="CF 1457 C Bouncing Ball"></a>CF 1457 C <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1457/problem/C">Bouncing Ball</a></h1><blockquote>
+<p>一共 $n$ 个坑，编号从 $1$ 开始。一些坑已经被填上了，一些没有。扔过一个小球，第一次落地在第 $p$ 个坑的位置，随后每次落地，都在前一个位置之后的第 $k$ 个位置，如第二次落地在 $p + k$。<br>有两种操作：</p>
+<ol>
+<li>填上当前序列的任一个空坑，代价为 $x$</li>
+<li>永远移除当前坑序列的第一个坑，并将球的落点向后推一个位置，代价为 $y$</li>
+</ol>
+<p>给定初始的坑序列被填上的情况，和 $p, k$，求最小的代价使球能跳过这个序列而不掉坑里。球至少落地一次。</p>
+<p>$1\leq p \leq n \leq 10^5, 1\leq k\leq n, 1\leq x, y\leq 10^4$</p>
+</blockquote>
+<p>两种想法。一种偏模拟，一种偏思维。</p>
+<p>首先可以考虑枚举最后一次落点的位置，显然是只会在最后 $k$ 个位置；再枚举这是第几次的落点，即枚举删了多长的前缀能让球最后落在这里。在所有枚举的答案中取最小值。复杂度，一个 <code>for</code> 套一个跳着变的 <code>while</code>，大概是 $O(n)$。</p>
+<p>另一种解法在我复述的题面里暗示了：删去第一个坑等价于第一次的落点向后推一个位置。首先我们可以利用动态规划求出这样一个数列 $dp[i]: 第一个落点在 i 时，跳过整个序列需要填的坑数$，从前向后或者从后往前 d 都可以，复杂度是 $O(n)$。然后枚举第一次的落点，所有结果中取最小。可以在 $O(n)$ 时间完成。</p>
+<h1 id="CF-1295-B-Infinite-Prefixes"><a href="#CF-1295-B-Infinite-Prefixes" class="headerlink" title="CF 1295 B Infinite Prefixes"></a>CF 1295 B <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1295/problem/B">Infinite Prefixes</a></h1><blockquote>
+<p>给定一个长度为 $n$ 的 01 串 $s$，可以构造一个 01 串 $t$ 由 $s$ 重复无穷多次，即 $t = sss\dots$<br>设一个 01 串的平衡度为 0 的个数减去 1 的个数。给定 $x$，求 $t$ 中平衡度等于 $x$ 的前缀的个数。输出 $-1$ 当个数无穷多时。</p>
+<p>$1\leq n\leq 10^5, -10^9\leq x\leq 10^9$</p>
+</blockquote>
+<p>先算一下 $s$ 前缀的平衡度数列，往后接几个 $s$ 模拟一下可以发现，用整个 $s$ 的平衡度作为“初始量”去过一遍字符串，平衡度数列就是结果平衡度的“变化量” $delta[i]$，比如单个 $s$ 的平衡度是 $b$，两个 $s$ 的就是 $2b$，三个就是 $3b$。现在 $t$ 前缀的平衡度如何变化已经可以映射到一个 $s$ 的长度里去算了：前缀中完整的 $s$ 个数乘初始量，再加上剩下不完整的 $s$ 所对应的那个位置的“变化量”。</p>
+<p>接下来就是看无限重复的过程中会出现几个平衡度为 $x$ 的前缀了。首先考虑无数个的情况，这只会在 <code>delta[n - 1] == 0</code>（循环一个周期后平衡度总是 $0$） 且 <code>delta[]</code> 中有值与 $x$ 相等的时候出现。此外，<code>delta[n - 1] == 0</code> 且 <code>delta[]</code> 中没有值与 $x$ 相等时，不会出现符合题设的前缀。</p>
+<p>当 <code>delta[n - 1] != 0</code> 时，就可以用之前提到的算法去找符合条件的位置了，扫一遍 $s$ 即可。</p>
+<h1 id="CF-1453-C-Triangles"><a href="#CF-1453-C-Triangles" class="headerlink" title="CF 1453 C Triangles"></a>CF 1453 C <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1453/problem/C">Triangles</a></h1><blockquote>
+<p>一个 $n$ 行 $n$ 列的方阵，元素都是一位十进制正整数，单元格边长为 $1$。对于任何一个 $0$ ~ $9$ 中的数字 $d$，求符合如下条件的三角形的面积：</p>
+<ol>
+<li>三个顶点都在单元格中心</li>
+<li>顶点所在的单元格，元素为 $d$</li>
+<li>至少一条边与方阵的边平行。长度为 $0$ 的边与方阵两边都平行</li>
+<li>面积尽可能大，但可以为 $0$</li>
+</ol>
+<p>对于每个 $d$，在确定这样的三角形之前，可以将方阵中任何一个位置的元素临时看作 $d$。<br>给定方阵，按 $d$ 从 $0$ 到 $1$ 的顺序输出面积的两倍值。</p>
+<p>$1\leq n\leq 2000$</p>
+</blockquote>
+<p>大模拟。</p>
+<p>巨大无比，目前敲过最大的。当场没过，回去之后发现是几个变量写错了。</p>
+<p>一个思路是维护好每行和每列中相隔最远的 $d$ 的位置，然后枚举那个平行边（底边）所在的行或列。如果这一行/列有至少两个 $d$，就取最大的高；只有一个 $d$，就在这一行/列取最长的底，再找到尽量大的高。这样属于枚举了所有可能的最大三角形。所有结果中取最大。</p>
+<p>Tutorial 的思路是：对于每个 $d$，可以只考虑它作为平行边端点的情况，再将它所在行/列的最远点取成 $d$，最后只要找这条底边最远的 $d$ 作为高即可。不需要考虑枚举到的 $d$ 作为高顶点的情况，因为高顶点只能是最边上的 $d$；也不需要考虑取到的 $d$ 作为高顶点的情况，因为任意取，可以在面积不变的情况下把它移动到底边上。</p>
+<h1 id="CF-1453-D-Checkpoints"><a href="#CF-1453-D-Checkpoints" class="headerlink" title="CF 1453 D Checkpoints"></a>CF 1453 D <a target="_blank" rel="noopener" href="https://codeforces.com/contest/1453/problem/D">Checkpoints</a></h1><blockquote>
+<p>编号从 $1$ 到 $n$ 的关卡，玩家从第一关开始向后连续通关。每一关至多有一个复活点，第一关一定有一个复活点。当玩家到达一个关卡时，该关的复活点立即被激活。<br>当玩家通过一个关卡时，可以到达整数连续的下一关；未通过该关时，会返回最近的被激活复活点所在的关卡（重新开始该关当未能通过一个有复活点的关卡时）。<br>对每个关卡，假设玩家通过和不通过的概率都是 $\frac{1}{2}$。给定玩家全部通关时总通过关卡数的期望 $k$，求一个符合条件的复活点分布。关卡总数至多为 $2000$。</p>
+<p>$1\leq n\leq 2000, 1\leq k\leq 10^{18}$</p>
+</blockquote>
+<p>可以看出经过一个复活点之后，前面的期望就完全独立了，可以加起来。那么只考虑一个有复活点的关卡后面跟着若干空关卡的情况，即可构造出答案。</p>
+<p>对于只有一关的游戏，可以算出通关期望是 $2$：设期望是 $x$，有一半的概率一次通关，另一半概率是在期望上多试一次，列出方程 $x = \frac{1}{2} \cdot 1 + \frac{1}{2} \cdot (x + 1)$。对于“10”这样的分布，$x = \frac{1}{2} \cdot \frac{1}{2} \cdot 2 + \frac{1}{2} (x + 1) +\frac{1}{2} \cdot \frac{1}{2} (x + 2)$，第一项是确定的无死亡通关，第二项是第一关没过，第三项是第二关没过，解得 $x = 6$。可以猜出方程，也可以随机模拟一遍<del>再猜</del>。复活点后面跟着 $n$ 个空关卡的通关期望方程是</p>
+<script type="math/tex; mode=display">
+\begin{array}{c}
+x = \frac{n + 1}{2^{n + 1}} + \sum_{i = 1}^{n + 1}\frac{i}{2^i} + \sum_{i = 1}^{n + 1}\frac{x}{2^i}\\[2ex]
+x = \frac{n + 1}{2^{n + 1}} + \sum_{i = 1}^{n + 1}\frac{2^i - 1}{2^{n + 1}} + x \cdot \frac{2^{n + 1} - 1}{2^{n + 1}}\\[2ex]
+x = 2^{n + 2} - 2
+\end{array}</script><p>换成数组上的表达，一个 <code>a[] = 1000...</code> 的数组，走通第 $i$ 个位置的期望是 $p_i = 2^{i + 2} - 2$。</p>
+<p>再跟一下这个数列，发现它在 60 多项就会超过 <code>long long</code> 的范围，看一下 $k$ 的范围只要维护大概这么长就行了，加起来不会超过 $2000$ 关的。</p>
+<p>最后，根据维护好的数组，从 $k$ 里减去对应的值，构造答案即可。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Jason
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://f-jason.site/blog/2020/12/16/algo-problems-02/" title="题解 02">https://f-jason.site/blog/2020/12/16/algo-problems-02/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/12/13/papers-on-codes-and-distributed-computing/" rel="prev" title="有关编码和分布式计算的几篇论文">
+      <i class="fa fa-chevron-left"></i> 有关编码和分布式计算的几篇论文
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/12/31/2020-annual/" rel="next" title="2020 年度总结">
+      2020 年度总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fas fa-hashtag"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
